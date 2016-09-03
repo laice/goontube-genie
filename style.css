@@ -12,7 +12,8 @@ body {
 }
 
 div {
-  padding: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 button {
@@ -90,6 +91,17 @@ input#gtrf_import_input {
   right: 10;
 }
 
+#gtrf_clearall {
+  color: red;
+  border-color: red;
+}
+
 .add_list_elem:hover {
   background: darkgreen;
+  cursor: pointer;
+}
+
+.playlist_elem:hover {
+  background: darkgreen;
+  cursor: pointer;
 }

@@ -5,7 +5,7 @@ A Chrome Extension for saving video urls in playlists which can be automatically
 Save the gtube-rapidfire-XX.crx file in /bin/ to your computer, open chrome://extensions and drag the file onto the browser window
 
 # usage
-Note: Due to security issues I'm still figuring out, keyboard copy+paste and pressing enter to submit aren't working yet, but the right-click menu works with paste and there are buttons for submitting everything.
+Note: keyboard copy+paste and pressing enter to submit aren't working yet, but the right-click menu works with paste and there are buttons for submitting everything. need to change how I'm interacting with the DOM and this should be available soon (or maybe api integration will make this irrelevant)
 
 Note: Currently only supports oldtubes
 
@@ -16,14 +16,14 @@ You can also add any individual video to the playlist by clicking on it in the l
 
 The Clear button erases your entire list.
 
-The export button will allow you to save a .json file (just an array of youtube links atm) with your playlist, which can then be imported back to the extension at any time by copying and pasting the text from the json into the text field which appears after hitting the Import button, and submitting it. (I can't directly read the file cause security, as far as I know).
+The export button will allow you to save a .json file (just an array of links as strings atm) with your playlist, which can then be imported back to the extension at any time by copying and pasting the text from the json into the text field which appears after hitting the Import button, and submitting it. (I can't directly read the file cause security, as far as I know). This is the ghetto way of saving until I can get playlists saved in sync'd storage.
 
 # future 
 
 * Optional automatic playlist removal of played links 
 * Permanently saved playlists in sync storage 
 * Management of individual playlist entries
-* Gathering title data from youtube api so you dont have to remember vids by their shortcodes
+* Gathering title data from api's so you dont have to remember vids by their shortcodes
 * Automatic gathering relevant links from video sites, removing need for copy/paste 
 * Other stuff I'm not remembering now
 

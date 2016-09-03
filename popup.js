@@ -27,19 +27,91 @@ update_links();
 var link_input = document.getElementById('gtrf_link_to_add');
 var rate_input = document.getElementById('gtrf_rate');
 var import_input = document.getElementById("gtrf_import_input")
+var playlist_save_input = document.getElementById('gtrf_save_playlist_input');
+
 var add_button = document.getElementById('gtrf_add');
 var fire_button = document.getElementById('gtrf_fire');
 var clear_button = document.getElementById('gtrf_clear');
+var clearall_button = document.getElementById('gtrf_clearall');
 var export_button = document.getElementById('gtrf_export');
 var import_button = document.getElementById('gtrf_import');
 var import_submit_button = document.getElementById('gtrf_import_submit');
+var playlist_button = document.getElementById('gtrf_playlist');
+var save_playlist_button = document.getElementById('gtrf_save_playlist');
+
+
 var status_div = document.getElementById('gtrf_status_message');
 var add_list_div = document.getElementById('gtrf_add_list');
 var import_input_div = document.getElementById("gtrf_import_input_div");
+var playlist_panel_div = document.getElementById("gtrf_playlist_panel");
 
-// init stuff
+var playlist_list_span = document.getElementById("gtrf_playlist_list");
+var playlist_save_panel_span = document.getElementById("gtrf_playlist_save_panel");
 
-import_input_div.style.display = 'none';
+
+// UI setup and init
+
+var hide_menus = function() {
+  import_input_div.style.display = 'none';
+  //playlist_panel_div.style.display = 'none';
+  playlist_list_span.style.display = 'none';
+  playlist_save_panel_span.style.display = 'none';
+  
+}
+
+var show_import_menu = function() {
+  import_input_div.style.display = 'inline-block';
+}
+
+var toggle_import_menu = function(){
+  if(import_input_div.style.display != 'none') {
+    import_input_div.style.display = 'none';
+  } else {
+    //import_input_div.style.display = 'block';
+    show_import_menu();
+  }
+
+}
+
+var set_import_menu_display = function(display) {
+  import_input_div.style.display = display;
+}
+
+var get_import_menu_display = function() {
+  return import_input_div.style.display;
+}
+
+var show_playlist_menu = function() {
+
+  playlist_list_span.style.display = 'inline-block';
+  playlist_save_panel_span.style.display = 'inline-block';
+  
+}
+
+var toggle_playlist_menu = function() {
+  if(playlist_list_span.style.display != 'none') {
+    playlist_list_span.style.display = 'none'
+    playlist_save_panel_span.style.display = 'none';
+    
+  } else {
+    playlist_list_span.style.display = 'inline-block';
+    playlist_save_panel_span.style.display = 'inline-block';
+    
+  }
+  
+}
+
+var set_playlist_menu_display = function(display) {
+  playlist_list_span.style.display = display;
+  playlist_save_panel_span.style.display = display;
+    
+}
+
+var get_playlist_menu_display = function() {
+  return playlist_list_span.style.display;
+}
+
+hide_menus();
 
 
 // gee i wonder what this does
@@ -101,20 +173,11 @@ var fire_queue = function() {
     // if user dips below 500 we put them at default
     
 
-    switch(rate_input.val) {
-      case (rate_input.val < 500):
-        rate = 1000;
-        break;
-      case (!rate_input.val):
-        rate = 1000;
-        break;
-      case (rate_input.val >= 500):
-        rate = rate_input.val;
-      default:
-        rate = 1000;
-        break;
-    }
-      
+    if (rate_input.value < 250) {
+      rate_input.value = 1000;
+    } else if (!rate_input.value) {
+      rate_input.value = 1000;
+    }         
 
     console.log("links length: " + links.length);
     links.forEach(function(link, i, array){
@@ -122,12 +185,12 @@ var fire_queue = function() {
         var temp_link = link;        
         if(validate_link(temp_link)){
           console.log("temp_link: "); console.log(temp_link);
-          send_link(temp_link);  
+          //send_link(temp_link);  
         }   
         
 
-      }, i*rate);
-      console.log("temp_rate:"); console.log(rate);
+      }, i*rate_input.value);
+      console.log("rate:"); console.log(i*rate_input.value);
       console.log("i: "); console.log(i);
 
     });
@@ -169,15 +232,39 @@ var send_link = function(link){
 // clears out local storage of the link queue and reloads the extension
 var clear_queue = function() {
 
+  chrome.storage.sync.remove("link_queue", function(){
+    if(chrome.runtime.lastError){
+      console.log(chrome.runtime.lastError);
+    } else {
+      console.log("Cleared Queue Successfully");
+      set_status('Cleared Queue Successfully');
+    }
+
+    //chrome.runtime.reload();
+    //update_links();
+    add_list_div.innerHTML = "";
+
+  });
+
+}
+
+var clear_playlist_list = function() {
+  playlist_list_span.innerHTML = "";
+}
+
+var clear_all = function() {
+
   chrome.storage.sync.clear(function(){
     if(chrome.runtime.lastError){
       console.log(chrome.runtime.lastError);
     } else {
-      console.log("Cleared Successfully");
-      set_status('Cleared Successfully');
+      console.log("Cleared All Successfully");
+      set_status('Cleared All Successfully');
     }
 
     chrome.runtime.reload();
+
+    //update_links();
 
   });
 
@@ -219,16 +306,6 @@ var export_list = function(){
   download_json('gtrf_list.json', JSON.stringify(links));
 }
 
-var toggle_import = function(){
-  if(import_input_div.style.display == 'block') {
-    import_input_div.style.display = 'none';
-  } else {
-    import_input_div.style.display = 'block';
-  }
-
-
-}
-
 var parse_import = function(){
   var data = JSON.parse(import_input.value);
 
@@ -240,7 +317,8 @@ var parse_import = function(){
   });
 
   import_input.value = "";
-  import_input_div.style.display = "none";
+  //import_input_div.style.display = "none";
+  toggle_import_menu();
 
 }
 
@@ -261,9 +339,10 @@ var import_input_keyup = function(event){
 var get_playlist = function(name, callback) {
     
     get_playlists(function(playlists){
-      for (var playlist in playlists) {
-        if (playlist.name == name) {
-          callback(playlist);
+      console.log(playlists);
+      for (var playlist in playlists) {             
+        if (playlists[playlist].name == name) {
+          callback(playlists[playlist]);
           break;
         }
       }
@@ -272,21 +351,39 @@ var get_playlist = function(name, callback) {
 
 var get_playlists = function(callback){
   chrome.storage.sync.get('playlists', function(obj){
+    //console.log(JSON.stringify(obj));
     if(obj.playlists){
       playlists = obj.playlists;
-      //console.log(JSON.stringify(playlists));
+      console.log("got playlists: ");
+      console.log(JSON.stringify(playlists));
 
       callback(playlists);
+    } else {
+      callback(null);
     }
   });
+}
 
+var get_playlist_count = function(callback){
+  get_playlists(function(playlists){
+    var count = 0;
+    for (var playlist in playlists) {
+      if (playlist.name){
+        count += 1;
+      }
+    }
+    callback(count);
+  });
 }
 
 var get_playlist_names = function(callback){
   get_playlists(function(playlists){
+    console.log('in playlist names');
+    console.log(JSON.stringify(playlists));
     var playlist_names = [];
     for(var playlist in playlists){
-      if(playlist.name){
+      console.log(JSON.stringify(playlist));
+      if(playlist){
         playlist_names.push(playlist);
       }
     }
@@ -315,36 +412,114 @@ var make_playlist = function(callback) {
 }
 
 
-var save_playlist = function(name){
-  make_json_playlist(function(playlist){
+var save_playlist = function(){
+  make_playlist(function(playlist){
+    get_playlist_count(function(playlist_count){        
+      var name = "";
 
-    var new_playlist = {
-      name: name,
-      playlist: playlist
-    }
+      if(playlist_save_input.value) {
+        name = playlist_save_input.value
+        console.log("name set to " + playlist_save_input.value)
+      } else {        
+          var num = playlist_count+1
+          name = "gtrf_playlist_" + num;
+          console.log("no name provided, default " + name + " used");        
+      }
 
-    get_playlists(function(playlists){
+      var new_playlist = {
+        name: name,
+        playlist: playlist
+      }
 
-      playlists[name] = playlist;
+      console.log("new_playlist: " + JSON.stringify(new_playlist));
 
-      chrome.storage.sync.set({playlists: playlists}, function(){
-        console.log("playlist saved");
+      get_playlists(function(playlists){
+        var temp_playlists = {};
+        if(playlists) { 
+          console.log('playlists found, adding');
+          console.log(playlists);
+
+          playlists[name] = new_playlist;
+          temp_playlists = playlists;
+        } else {
+          console.log('no playlist found, making new list');
+          temp_playlists[name] = new_playlist;
+        }
+        console.log("setting playlists:");
+        console.log(JSON.stringify(temp_playlists));
+        chrome.storage.sync.set({playlists: temp_playlists}, function(){
+          console.log("playlist saved");
+          set_status("Playlist saved");
+          open_playlist_panel();
+          playlist_save_input.value = "";
+        });
       });
-    });
 
-    
+    });
   });  
 
 }
 
-var load_playlist = function(name){
+var open_playlist_panel = function(){
+  console.log('opening playlist');
+  toggle_playlist_menu()
+  clear_playlist_list();
+  if(get_playlist_menu_display() != 'none'){
+    console.log('playlist visible');
+    get_playlist_names(function(playlists){
+
+      console.log(JSON.stringify(playlists));
+
+      playlists.forEach(function(list_name, i, array){
+        var list_elem = document.createElement('span');
+        var entry = document.createTextNode(list_name);
+        var br = document.createElement('br');
+
+        list_elem.appendChild(entry);
+        list_elem.setAttribute("class", "playlist_elem");
+
+        list_elem.onclick = function() {          
+          var temp_name = list_name;
+          console.log("fetching list: " + temp_name);
+          set_active_playlist(temp_name);
+          open_playlist_panel();
+        }
+
+        playlist_list_span.appendChild(list_elem);
+        playlist_list_span.appendChild(br);
+      });
+
+    });
+  } else {
+    // clear old playlist so it can be regenned next opening
+
+  }
+}
+
+var set_active_playlist = function(name) {
+  clear_queue();
   get_playlist(name, function(playlist){
-    chrome.storage.sync.set({link_queue: playlist}, function(){
+    console.log("setting active playlist... ");
+    console.log(playlist);
+    chrome.storage.sync.set({link_queue: playlist.playlist}, function(){
+      console.log('link queue updated');
       update_links();
     });
   });
 }
 
+
+// button click handlers
+
+add_button.onclick = add_to_queue;
+fire_button.onclick = fire_queue;
+clear_button.onclick = clear_queue;
+export_button.onclick = export_list;
+import_button.onclick = toggle_import_menu;
+import_submit_button.onclick = parse_import;
+playlist_button.onclick = open_playlist_panel;
+save_playlist_button.onclick = save_playlist;
+clearall_button.onclick = clear_all;
 
 
 // third party
@@ -362,9 +537,3 @@ var download_json = function(filename, text) {
   document.body.removeChild(element);
 }
 
-add_button.onclick = add_to_queue;
-fire_button.onclick = fire_queue;
-clear_button.onclick = clear_queue;
-export_button.onclick = export_list;
-import_button.onclick = toggle_import;
-import_submit_button.onclick = parse_import;
