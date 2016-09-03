@@ -20,10 +20,10 @@ The export button will allow you to save a .json file with your playlist, which 
 
 # future 
 
-Optional automatic playlist removal of played links
-Permanently saved playlists in sync storage
-Automatic gathering relevant links from video sites, removing need for copy/paste
-Other stuff I'm not remembering now cause I just banged this out in a day
+* Optional automatic playlist removal of played links 
+* Permanently saved playlists in sync storage 
+* Automatic gathering relevant links from video sites, removing need for copy/paste 
+* Other stuff I'm not remembering now cause I just banged this out in a day 
 
 
 
