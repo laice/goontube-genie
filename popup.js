@@ -258,6 +258,95 @@ var import_input_keyup = function(event){
   }
 }
 
+var get_playlist = function(name, callback) {
+    
+    get_playlists(function(playlists){
+      for (var playlist in playlists) {
+        if (playlist.name == name) {
+          callback(playlist);
+          break;
+        }
+      }
+    });      
+}
+
+var get_playlists = function(callback){
+  chrome.storage.sync.get('playlists', function(obj){
+    if(obj.playlists){
+      playlists = obj.playlists;
+      //console.log(JSON.stringify(playlists));
+
+      callback(playlists);
+    }
+  });
+
+}
+
+var get_playlist_names = function(callback){
+  get_playlists(function(playlists){
+    var playlist_names = [];
+    for(var playlist in playlists){
+      if(playlist.name){
+        playlist_names.push(playlist);
+      }
+    }
+    callback(playlist_names);
+  });
+}
+
+var make_json_playlist = function(callback) {
+  chrome.storage.sync.get('link_queue', function(obj){
+    if(obj.link_queue != null){
+      var playlist = obj.link_queue;
+      console.log("making json playlist... ");      
+      callback(JSON.stringify(playlist));
+    }
+  });
+}
+
+var make_playlist = function(callback) {
+  chrome.storage.sync.get('link_queue', function(obj){
+    if(obj.link_queue != null){
+      var playlist = obj.link_queue;
+      console.log("making playlist... ");      
+      callback(playlist);
+    }
+  });
+}
+
+
+var save_playlist = function(name){
+  make_json_playlist(function(playlist){
+
+    var new_playlist = {
+      name: name,
+      playlist: playlist
+    }
+
+    get_playlists(function(playlists){
+
+      playlists[name] = playlist;
+
+      chrome.storage.sync.set({playlists: playlists}, function(){
+        console.log("playlist saved");
+      });
+    });
+
+    
+  });  
+
+}
+
+var load_playlist = function(name){
+  get_playlist(name, function(playlist){
+    chrome.storage.sync.set({link_queue: playlist}, function(){
+      update_links();
+    });
+  });
+}
+
+
+
 // third party
 
 var download_json = function(filename, text) {

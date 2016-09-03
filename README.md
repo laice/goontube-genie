@@ -16,7 +16,7 @@ You can also add any individual video to the playlist by clicking on it in the l
 
 The Clear button erases your entire list.
 
-The export button will allow you to save a .json file with your playlist, which can then be readded to the extension at any time by copying and pasting the text from the json into the text field which appears after hitting the Import button, and submitting it. (I can't directly read the file cause security, as far as I know).
+The export button will allow you to save a .json file (just an array of youtube links atm) with your playlist, which can then be imported back to the extension at any time by copying and pasting the text from the json into the text field which appears after hitting the Import button, and submitting it. (I can't directly read the file cause security, as far as I know).
 
 # future 
 
