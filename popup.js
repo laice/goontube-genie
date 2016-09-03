@@ -301,6 +301,36 @@ var add_to_list = function(content) {
   add_list_div.appendChild(br);
 }
 
+var export_playlists = function() {
+  get_playlists(function(playlists){
+    download_json('gtrf_playlists.json', JSON.stringify(playlists));
+  });
+}
+
+var import_playlists = function() {
+  var data = JSON.parse(import_input.value);
+  chrome.storage.sync.get("playlists", function(obj){
+    var temp_data;
+    if(obj.playlists){
+      temp_data = obj.playlists;
+      for (var list in data) {
+        temp_data[list.name] = list;
+      }
+    } else{
+      temp_data = data;
+    }
+
+    chrome.storage.sync.set({playlists: temp_data}, function(){
+      if(chrome.runtime.lastError) {
+        console.log(chrome.runtime.lastError);
+      } else{
+        console.log("Import successful");
+        set_status("Import successful");
+      }
+    });
+  });
+}
+
 var export_list = function(){
   update_links();
   download_json('gtrf_list.json', JSON.stringify(links));
@@ -490,10 +520,7 @@ var open_playlist_panel = function(){
       });
 
     });
-  } else {
-    // clear old playlist so it can be regenned next opening
-
-  }
+  } 
 }
 
 var set_active_playlist = function(name) {
@@ -514,9 +541,11 @@ var set_active_playlist = function(name) {
 add_button.onclick = add_to_queue;
 fire_button.onclick = fire_queue;
 clear_button.onclick = clear_queue;
-export_button.onclick = export_list;
+//export_button.onclick = export_list;
+export_button.onclick = export_playlists;
 import_button.onclick = toggle_import_menu;
-import_submit_button.onclick = parse_import;
+//import_submit_button.onclick = parse_import;
+import_submit_button.onclick = import_playlists;
 playlist_button.onclick = open_playlist_panel;
 save_playlist_button.onclick = save_playlist;
 clearall_button.onclick = clear_all;

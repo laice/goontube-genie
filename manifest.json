@@ -3,7 +3,7 @@
 
   "name": "Goontube RapidFire",
   "description": "This allows for queueing and adding multiple videos to goontube at once",
-  "version": "1.1",
+  "version": "1.2",
 
   "browser_action": {
     "default_icon": "icon.png",

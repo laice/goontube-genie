@@ -16,7 +16,7 @@ You can also add any individual video to the playlist by clicking on it in the l
 
 The Clear button erases your current list. The Wipe button erases your current list as well as your playlists.
 
-The export button will allow you to save a .json file (just an array of links as strings atm) with your current playlist, which can then be imported back to the extension at any time by copying and pasting the text from the json into the text field which appears after hitting the Import button, and submitting it. (I can't directly read the file cause security, as far as I know). ~~This is the ghetto way of saving until I can get playlists saved in storage.~~
+The export button will allow you to save a .json file all your playlists, which can then be imported back to the extension at any time by copying and pasting the text from the json into the text field which appears after hitting the Import button, and submitting it. (I can't directly read the file cause security, as far as I know). ~~This is the ghetto way of saving until I can get playlists saved in storage.~~ It is still the ghetto way of backing up your playlists.
 
 Playlists can now be saved! Using the Lists button, you can name your current playlist and save it for later. Saved playlists appear below save dialog, in the List menu, and can be loaded by clicking on them. Currently there is a bug with adding a playlist with only 1 item, but multiple item playlists should be fine. If you add a playlist with the same name as a previous one, it will overwrite it, allowing you to update playlists by loading them, adding to them, and re-saving them.
 
