@@ -12,7 +12,7 @@ Note: Currently only supports oldtubes
 So, while you're browsing a gtube supported website and you see a vid you might want for gtube later, put the URL into the top text field and click Add. This will save it to a list which should sync between any chrome browser which you're logged in.
 
 The Fire! button will, when in the goontube tab (this is required), add everything in the list you're able to add, the Rate field allows you to specify the delay between each add, measured in milliseconds. The current minimum is 500ms and may be increased if I'm told to do so. The default is 1000ms.
-You can also add any individual video to the playlist by simply clicking on it in the list.
+You can also add any individual video to the playlist by clicking on it in the list.
 
 The Clear button erases your entire list.
 
