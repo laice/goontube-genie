@@ -2,7 +2,7 @@
 A Chrome Extension for saving video urls in playlists which can be automatically added to goontube
 
 # installation
-Save the gtube-rapidfire.crx file in /bin/ to your computer, open chrome://extensions and drag the file onto the browser window
+Save the gtube-rapidfire-XX.crx file in /bin/ to your computer, open chrome://extensions and drag the file onto the browser window
 
 # usage
 Note: Due to security issues I'm still figuring out, keyboard copy+paste and pressing enter to submit aren't working yet, but the right-click menu works with paste and there are buttons for submitting everything.
