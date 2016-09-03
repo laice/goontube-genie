@@ -27,6 +27,7 @@ Playlists can now be saved! Using the Lists button, you can name your current pl
 * Management of individual playlist entries
 * Gathering title data from api's so you dont have to remember vids by their shortcodes
 * Automatic gathering relevant links from video sites, removing need for copy/paste 
+* imgur integration for easily saving and adding gifs and images to chat, with optional support for automatic viewing them inline in chat (like extended emotes)
 * Other stuff I'm not remembering now
 
 # :twerk:
