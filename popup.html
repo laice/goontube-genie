@@ -1,0 +1,59 @@
+<html>
+<head>
+  <title>Goontube Rapid Fire</title>
+
+  <link rel="stylesheet" type="text/css" href="style.css">
+
+</head>
+  <div id="gtrf_header"> Goontube Rapid Fire</div>
+  <div id="gtrf_status_message"> </div>
+
+
+  <br>
+  <br>
+
+  <div>
+      <input type="text" id="gtrf_link_to_add" placeholder="link goes here" onkeyup="add_link_keyup(event)"/> <button id="gtrf_add" >Add</button>      
+      <br>
+      <br>
+      <br>
+
+  </div>  
+
+  <div>
+    <button id="gtrf_fire">Fire!</button>
+    <input type="text" id="gtrf_rate" style="width: 65" placeholder="Rate*">
+    <br>
+    <small>*in ms, min 500 default 1000</small>
+  </div>
+
+  <div>
+    <button id="gtrf_clear">Clear</button>
+  </div>
+  <div>    
+    <button id="gtrf_export">Export</button>
+    <button id="gtrf_import">Import</button>   
+  </div>
+  <div id="gtrf_import_input_div">
+      Paste contents of exported file here:
+      <br>
+      <br>
+      <input id="gtrf_import_input" onkeyup="import_input_keyup(event)"/>
+      <br>
+      <br>
+      <button id="gtrf_import_submit">Submit</button>
+  </div>
+
+
+  <br>
+  <br>
+
+  <div id="gtrf_add_list">
+
+  </div>
+
+  <div id="gtrf_footer"><small>a jynn joint</small></div>
+
+  <script src="popup.js"></script>
+
+</html>
