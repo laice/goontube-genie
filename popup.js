@@ -185,7 +185,7 @@ var fire_queue = function() {
         var temp_link = link;        
         if(validate_link(temp_link)){
           console.log("temp_link: "); console.log(temp_link);
-          //send_link(temp_link);  
+          send_link(temp_link);  
         }   
         
 
