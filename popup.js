@@ -161,7 +161,7 @@ var validate_link = function(link) {
 
 
 
-// begins loading shit into the playlist
+// begins loading shit into the goontube playlist
 var fire_queue = function() {
   if(links) {
     console.log("fire_queue links: ");
@@ -218,7 +218,7 @@ var send_link = function(link){
 
   // send in the injected code
   chrome.tabs.executeScript({file:"/tubes_fire.js"}, function(){
-    // tell injected code what our links our
+    // tell injected code what our links are
     chrome.tabs.sendMessage(id, {link: link}, function(){
       console.log("link sent");
     });
