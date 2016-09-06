@@ -241,7 +241,7 @@ var clear_queue = function() {
     }
 
     //chrome.runtime.reload();
-    //update_links();
+    update_links();
     add_list_div.innerHTML = "";
 
   });
