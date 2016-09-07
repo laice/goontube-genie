@@ -107,6 +107,28 @@ var set_playlist_menu_display = function(display) {
     
 }
 
+
+var save_video_sync = function(video_info) {
+  chrome.storage.sync.get("videos", function(obj){
+    obj.videos[video_info.id.videoId] = video_info;
+    chrome.storage.sync.set({videos: obj.videos}, function(){
+
+    });
+
+  });
+}
+
+var get_video_sync = function(id){
+  chrome.storage.sync.get("videos", function(obj){
+    if(obj.videos[id]) {
+      return obj.videos[id];
+    } else {
+      return false;
+    }
+  });
+}
+
+
 var get_playlist_menu_display = function() {
   return playlist_list_span.style.display;
 }
@@ -121,7 +143,46 @@ var add_to_queue = function() {
 
   if(validate_link(link) == false){
     return;
-  }  
+  } 
+
+  // part=fileDetails&id
+
+  var video_id = parse_vid_url(link);
+  console.log(video_id);
+  var video_title = "";
+
+  if(get_video_sync(video_id)){
+    video_title = get_video_sync(video_id).id.videoId;
+    console.log('video found in sync storage');
+    console.log(video_title);
+  } else {
+
+    console.log('video not found in sync storage, retrieving');
+    var xhr = new XMLHttpRequest();
+
+    xhr.open("GET", "https://www.googleapis.com/youtube/v3/search?q="+video_id+"&part=snippet&key=AIzaSyDQfqFAKxfP4FaFxq0fy51y9iI-GeGIm50", true);
+
+    xhr.onload = function(e) {
+      if(xhr.readyState === 4 ) {
+        if (xhr.status === 200){
+          console.log(xhr.responseText);
+          var results = JSON.parse(xhr.responseText);
+          console.log(results);
+          //save_video_sync(results.items[0]);
+        } else {
+          console.error(xhr.statusText);
+          console.error(xhr.responseText);
+        }
+      }
+    }
+
+    xhr.send();
+
+  }
+
+
+  
+ 
 
   // reads the text from the link input box and adds it to our links array
   links.push(link);
@@ -281,9 +342,23 @@ var set_status = function(content) {
   status_div.appendChild(text_node);
 }
 
-// this list collects all the shitty vids the user adds and puts them down
+var parse_vid_url = function(url) {
+  // only supports youtube atm
+
+  return url.slice(-11);
+
+
+}
+
+
+// this list collects all the vids the user adds and puts them down
 // below the buttons so they dont get confused and lose their minds
 var add_to_list = function(content) {
+
+  //console.log("in add to list");
+
+  
+
   var list_elem = document.createElement('span');
   var text_node = document.createTextNode(content);
   var br = document.createElement("br");
