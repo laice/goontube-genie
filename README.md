@@ -22,12 +22,14 @@ The export button will allow you to save a .json file all your playlists, which 
 
 Playlists can now be saved! Using the Lists button, you can name your current playlist and save it for later. Saved playlists appear below save dialog, in the List menu, and can be loaded by clicking on them. Currently there is a bug with adding a playlist with only 1 item, but multiple item playlists should be fine. If you add a playlist with the same name as a previous one, it will overwrite it, allowing you to update playlists by loading them, adding to them, and re-saving them.
 
+
+
 # future 
 
 * Optional automatic playlist removal of played links 
 * Permanently saved playlists in sync storage 
 * Management of individual playlist entries
-* Gathering title data from api's so you dont have to remember vids by their shortcodes
+* Gathering title data from api's so you dont have to remember vids by their shortcodes *Done for youtube
 * Automatic gathering relevant links from video sites, removing need for copy/paste 
 * imgur integration for easily saving and adding gifs and images to chat, with optional support for automatic viewing them inline in chat (like extended emotes)
 * Other stuff I'm not remembering now
