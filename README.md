@@ -1,4 +1,4 @@
-# goontube-rapidfire
+# goontube-genie
 A Chrome Extension for saving video urls in playlists which can be automatically added to goontube
 
 # installation
