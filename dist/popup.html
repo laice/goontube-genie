@@ -9,26 +9,61 @@
   <div id="gtrf_status_message"> </div>
 
   <div>
-      <input type="text" id="gtrf_link_to_add" placeholder="link goes here" onkeyup="add_link_keyup(event)"/> <button id="gtrf_add" >Add</button>      
+      <span class="tooltip">
+        <input type="text" id="gtrf_link_to_add" placeholder="link goes here" onkeyup="add_link_keyup(event)"/> 
+        <span class="tooltiptext">Right-click->paste a link to add to the queue</span>
+      </span>
+      <span class="tooltip"><button id="gtrf_add" >Add</button> <span class="tooltiptext" style="width: 90px">Click to add pasted link</span></span>
       <br>
       <br>
 
   </div>  
 
   <div>
-    <button id="gtrf_fire">Fire!</button>
-    <input type="text" id="gtrf_rate" placeholder="Rate">
+    <span class="tooltip">
+      <button id="gtrf_fire">Fire!</button>
+      <span class="tooltiptext">Press this to add entire queue at specified Rate</span>
+    </span>
+    <span class="tooltip">
+      <input type="text" id="gtrf_rate" placeholder="Rate">
+      <span class="tooltiptext">Rate at which to Fire, default 1000 minimum 500</span>
+    </span>
     <br>    
   </div>
 
   <div>
-    <button id="gtrf_clear">Clear</button>
-    <button id="gtrf_clearall">Wipe</button> 
+    <span class="tooltip">
+      <button id="gtrf_clear">Clear</button>
+      <span class="tooltiptext">
+      Clears the currently loaded playlist, does not delete saved playlists
+      </span>
+    </span>
+    <span class="tooltip">
+      <button id="gtrf_clearall">Wipe</button> 
+      <span class="warningtooltiptext">
+        Removes ALL extension data from local and sync'd copies
+      </span>
+    </span>
   </div>
-  <div>    
-    <button id="gtrf_import">Import</button> 
-    <button id="gtrf_export">Export</button>
-    <button id="gtrf_playlist">Lists</button>
+  <div> 
+    <span class="tooltip">   
+      <button id="gtrf_import">Import</button> 
+      <span class="tooltiptext">
+        Import playlists from an exported .json file
+      </span>
+    </span>
+    <span class="tooltip">
+      <button id="gtrf_export">Export</button>
+      <span class="tooltiptext">
+        Export all playlists as a .json file
+      </span>
+    </span>
+    <span class="tooltip">
+      <button id="gtrf_playlist">Lists</button>
+      <span class="tooltiptext">
+        Manage Playlists
+      </span>
+    </span>
   </div>
   <div id="gtrf_import_input_div">
       Paste contents of exported file here:
