@@ -15,6 +15,8 @@ var update_links = function(){
 
       console.log("links length: " + links.length);
 
+      update_addlist_titles();
+
     }
   });
 
@@ -108,23 +110,25 @@ var set_playlist_menu_display = function(display) {
 }
 
 
-var save_video_sync = function(video_info) {
-  chrome.storage.sync.get("videos", function(obj){
-    obj.videos[video_info.id.videoId] = video_info;
-    chrome.storage.sync.set({videos: obj.videos}, function(){
-
-    });
+var save_video_sync = function(video_info, prefix) {
+  var vid_obj = {};
+  vid_obj[prefix+video_info.id] = video_info;
+  chrome.storage.sync.set(vid_obj, function(){
 
   });
 }
 
-var get_video_sync = function(id){
-  chrome.storage.sync.get("videos", function(obj){
-    if(obj.videos[id]) {
-      return obj.videos[id];
+var get_video_sync = function(id, prefix, callback, params){
+  chrome.storage.sync.get(prefix+id, function(obj){
+    
+    if(obj[prefix+id]) {
+      console.log('found video');
+      callback(obj[prefix+id], params);
     } else {
-      return false;
+      console.log("prefix + id not found");
+      callback(false, params);
     }
+    
   });
 }
 
@@ -147,38 +151,24 @@ var add_to_queue = function() {
 
   // part=fileDetails&id
 
-  var video_id = parse_vid_url(link);
-  console.log(video_id);
+  var vid = parse_vid_url(link);
+  console.log(vid.id);
   var video_title = "";
 
-  if(get_video_sync(video_id)){
-    video_title = get_video_sync(video_id).id.videoId;
-    console.log('video found in sync storage');
-    console.log(video_title);
-  } else {
+  get_video_sync(vid.id, vid.prefix, function(video){
 
-    console.log('video not found in sync storage, retrieving');
-    var xhr = new XMLHttpRequest();
-
-    xhr.open("GET", "https://www.googleapis.com/youtube/v3/search?q="+video_id+"&part=snippet&key=AIzaSyDQfqFAKxfP4FaFxq0fy51y9iI-GeGIm50", true);
-
-    xhr.onload = function(e) {
-      if(xhr.readyState === 4 ) {
-        if (xhr.status === 200){
-          console.log(xhr.responseText);
-          var results = JSON.parse(xhr.responseText);
-          console.log(results);
-          //save_video_sync(results.items[0]);
-        } else {
-          console.error(xhr.statusText);
-          console.error(xhr.responseText);
-        }
-      }
+    if(video){      
+      console.log('video found in sync storage');
+      console.log(video);
+    
+    } else {
+      console.log('video not found in sync storage, retrieving');
+      retrieve_yt_info(vid.id, function(video){
+        save_video_sync(video, vid.prefix);
+      });
     }
-
-    xhr.send();
-
-  }
+  });
+  
 
 
   
@@ -201,6 +191,56 @@ var add_to_queue = function() {
   link_input.value = "";
 
 }
+
+var retrieve_yt_info = function(id, callback) {
+  var xhr = new XMLHttpRequest();
+
+      xhr.open("GET", "https://www.googleapis.com/youtube/v3/videos?id="+id+"&part=snippet&key="+GTRF.settings.key, true);
+
+      xhr.onload = function(e) {
+        if(xhr.readyState === 4 ) {
+          if (xhr.status === 200){
+            //console.log(xhr.responseText);
+            var results = JSON.parse(xhr.responseText);
+            console.log(results);
+            callback(results.items[0]);            
+          } else {
+            console.error(xhr.statusText);
+            console.error(xhr.responseText);
+          }
+        }
+      }
+
+      xhr.send();
+}
+
+
+
+var update_addlist_titles = function() {
+  console.log('updating titles');
+  var addlist_children = add_list_div.children;
+  for(var i = 0; i < addlist_children.length; i++){
+    if(addlist_children[i].innerHTML.substring(0,4) == "http"){
+      var id = addlist_children[i].innerHTML.slice(-11);
+      console.log(id);
+      get_video_sync(id, "yt", function(video, params){
+        var element = params.element;
+        if (video){
+          console.log("found addlist video: ");
+          console.log(video.snippet.title);
+          element.innerHTML = video.snippet.title;
+        } else {
+          retrieve_yt_info(id, function(video){
+            save_video_sync(video, "yt");
+            element.innerHTML = video.snippet.title;
+          });
+        }
+      }, {element: addlist_children[i]});
+    }
+  }
+}
+
+
 
 // weak ass validation for now
 var validate_link = function(link) {
@@ -345,7 +385,10 @@ var set_status = function(content) {
 var parse_vid_url = function(url) {
   // only supports youtube atm
 
-  return url.slice(-11);
+  return { 
+    id: url.slice(-11), 
+    prefix: "yt"
+  };
 
 
 }
