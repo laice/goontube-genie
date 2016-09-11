@@ -1,9 +1,9 @@
 {
   "manifest_version": 2,
 
-  "name": "Goontube RapidFire",
-  "description": "This allows for queueing and adding multiple videos to goontube at once",
-  "version": "1.31",
+  "name": "Goontube Genie",
+  "description": "A framework for interacting with goontube via extensions",
+  "version": "1.0",
 
   "browser_action": {
     "default_icon": {

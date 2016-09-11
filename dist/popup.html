@@ -1,96 +1,98 @@
 <html>
 <head>
-  <title>Goontube Rapid Fire</title>
+  <title>Goontube Genie</title>
 
   <link rel="stylesheet" type="text/css" href="style.css">
 
 </head>
-  <div id="gtrf_header"> Goontube Rapid Fire</div>
-  <div id="gtrf_status_message"> </div>
+  <div id="gtrf">
+    <div id="gtrf_header"> Goontube Rapid Fire</div>
+    <div id="gtrf_status_message"> </div>
 
-  <div>
+    <div>
+        <span class="tooltip">
+          <input type="text" id="gtrf_link_to_add" placeholder="link goes here" onkeyup="add_link_keyup(event)"/> 
+          <span class="tooltiptext">Right-click->paste a link to add to the queue</span>
+        </span>
+        <span class="tooltip"><button id="gtrf_add" >Add</button> <span class="tooltiptext" style="width: 90px">Click to add pasted link</span></span>
+        <br>
+        <br>
+
+    </div>  
+
+    <div>
       <span class="tooltip">
-        <input type="text" id="gtrf_link_to_add" placeholder="link goes here" onkeyup="add_link_keyup(event)"/> 
-        <span class="tooltiptext">Right-click->paste a link to add to the queue</span>
+        <button id="gtrf_fire">Fire!</button>
+        <span class="tooltiptext">Press this to add entire queue at specified Rate</span>
       </span>
-      <span class="tooltip"><button id="gtrf_add" >Add</button> <span class="tooltiptext" style="width: 90px">Click to add pasted link</span></span>
+      <span class="tooltip">
+        <input type="text" id="gtrf_rate" placeholder="Rate">
+        <span class="tooltiptext">Rate at which to Fire, default 1000 minimum 500</span>
+      </span>
+      <br>    
+    </div>
+
+    <div>
+      <span class="tooltip">
+        <button id="gtrf_clear">Clear</button>
+        <span class="tooltiptext">
+        Clears the currently loaded playlist, does not delete saved playlists
+        </span>
+      </span>
+      <span class="tooltip">
+        <button id="gtrf_clearall">Wipe</button> 
+        <span class="warningtooltiptext">
+          Removes ALL extension data from local and sync'd copies
+        </span>
+      </span>
+    </div>
+    <div> 
+      <span class="tooltip">   
+        <button id="gtrf_import">Import</button> 
+        <span class="tooltiptext">
+          Import playlists from an exported .json file
+        </span>
+      </span>
+      <span class="tooltip">
+        <button id="gtrf_export">Export</button>
+        <span class="tooltiptext">
+          Export all playlists as a .json file
+        </span>
+      </span>
+      <span class="tooltip">
+        <button id="gtrf_playlist">Lists</button>
+        <span class="tooltiptext">
+          Manage Playlists
+        </span>
+      </span>
+    </div>
+    <div id="gtrf_import_input_div">
+        Paste contents of exported file here:
+        <br>
+        <br>
+        <input id="gtrf_import_input" onkeyup="import_input_keyup(event)"/>
+        <br>
+        <br>
+        <button id="gtrf_import_submit">Submit</button>
+    </div>
+
+    <div id="gtrf_playlist_panel">           
+      <span id="gtrf_playlist_save_panel">
+        <input type="text" id="gtrf_save_playlist_input" placeholder="name of playlist" /> <button id="gtrf_save_playlist">Save</button>
+      </span>
       <br>
       <br>
+      <span id="gtrf_playlist_list">
+      </span>
+    <div>
 
-  </div>  
 
-  <div>
-    <span class="tooltip">
-      <button id="gtrf_fire">Fire!</button>
-      <span class="tooltiptext">Press this to add entire queue at specified Rate</span>
-    </span>
-    <span class="tooltip">
-      <input type="text" id="gtrf_rate" placeholder="Rate">
-      <span class="tooltiptext">Rate at which to Fire, default 1000 minimum 500</span>
-    </span>
-    <br>    
+    <div id="gtrf_add_list">
+
+    </div>
+
+    <div id="gtrf_footer"></div>
   </div>
-
-  <div>
-    <span class="tooltip">
-      <button id="gtrf_clear">Clear</button>
-      <span class="tooltiptext">
-      Clears the currently loaded playlist, does not delete saved playlists
-      </span>
-    </span>
-    <span class="tooltip">
-      <button id="gtrf_clearall">Wipe</button> 
-      <span class="warningtooltiptext">
-        Removes ALL extension data from local and sync'd copies
-      </span>
-    </span>
-  </div>
-  <div> 
-    <span class="tooltip">   
-      <button id="gtrf_import">Import</button> 
-      <span class="tooltiptext">
-        Import playlists from an exported .json file
-      </span>
-    </span>
-    <span class="tooltip">
-      <button id="gtrf_export">Export</button>
-      <span class="tooltiptext">
-        Export all playlists as a .json file
-      </span>
-    </span>
-    <span class="tooltip">
-      <button id="gtrf_playlist">Lists</button>
-      <span class="tooltiptext">
-        Manage Playlists
-      </span>
-    </span>
-  </div>
-  <div id="gtrf_import_input_div">
-      Paste contents of exported file here:
-      <br>
-      <br>
-      <input id="gtrf_import_input" onkeyup="import_input_keyup(event)"/>
-      <br>
-      <br>
-      <button id="gtrf_import_submit">Submit</button>
-  </div>
-
-  <div id="gtrf_playlist_panel">           
-    <span id="gtrf_playlist_save_panel">
-      <input type="text" id="gtrf_save_playlist_input" placeholder="name of playlist" /> <button id="gtrf_save_playlist">Save</button>
-    </span>
-    <br>
-    <br>
-    <span id="gtrf_playlist_list">
-    </span>
-  <div>
-
-
-  <div id="gtrf_add_list">
-
-  </div>
-
-  <div id="gtrf_footer"></div>
   <script src="settings.js"></script>
   <script src="popup.js"></script>
 
