@@ -2,6 +2,8 @@
 A Chrome Extension for saving video urls in playlists which can be automatically added to goontube
 
 # installation
+Current version: 1.3
+
 Navigate to the /bin folder above, and click the highest numbered goontube-rapidfire-XX.crx file. This will take you to a page with a download button to save the file to your computer (right click save as... will not get you the right file). After doing so, navigate chrome to chrome://extensions and drag the file onto the browser window.
 
 # usage

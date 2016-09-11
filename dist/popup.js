@@ -123,10 +123,10 @@ var get_video_sync = function(id, prefix, callback, params){
     
     if(obj[prefix+id]) {
       console.log('found video');
-      callback(obj[prefix+id], params);
+      callback(obj[prefix+id], params, id, prefix);
     } else {
       console.log("prefix + id not found");
-      callback(false, params);
+      callback(false, params, id, prefix);
     }
     
   });
@@ -207,6 +207,7 @@ var retrieve_yt_info = function(id, callback) {
           } else {
             console.error(xhr.statusText);
             console.error(xhr.responseText);
+            callback(false);
           }
         }
       }
@@ -222,20 +223,28 @@ var update_addlist_titles = function() {
   for(var i = 0; i < addlist_children.length; i++){
     if(addlist_children[i].innerHTML.substring(0,4) == "http"){
       var id = addlist_children[i].innerHTML.slice(-11);
-      console.log(id);
-      get_video_sync(id, "yt", function(video, params){
+      console.log(i + ": " + id);
+      get_video_sync(id, "yt", function(video, params, id, prefix){
         var element = params.element;
         if (video){
           console.log("found addlist video: ");
           console.log(video.snippet.title);
           element.innerHTML = video.snippet.title;
         } else {
+          console.log('video not found, retrieving info for ' + id);
           retrieve_yt_info(id, function(video){
-            save_video_sync(video, "yt");
-            element.innerHTML = video.snippet.title;
+            if(video){
+              console.log('video found:');
+              console.log(video);
+              save_video_sync(video, "yt");
+              element.innerHTML = video.snippet.title;
+            } else {
+              console.log('video not retrieved');
+            }
+            
           });
         }
-      }, {element: addlist_children[i]});
+      }, {"element": addlist_children[i]});
     }
   }
 }
@@ -417,6 +426,7 @@ var add_to_list = function(content) {
   list_elem.appendChild(text_node);
   add_list_div.appendChild(list_elem);
   add_list_div.appendChild(br);
+  update_addlist_titles();
 }
 
 var export_playlists = function() {
