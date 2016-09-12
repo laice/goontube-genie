@@ -1,4 +1,4 @@
-var GTRF = Genie.GTRF;
+var GTRF = chrome.extension.getBackgroundPage().Genie.GTRF;
 GTRF.links = [];
 var links = GTRF.links;
 
@@ -12,7 +12,7 @@ var update_links = GTRF.update_links = function(){
       if(links.length > 0) {
         links.forEach(function(link, i, array){
           add_to_list(link);
-        });        
+        });
       }
 
       console.log("links length: " + links.length);
@@ -25,7 +25,7 @@ var update_links = GTRF.update_links = function(){
 }
 
 
-update_links();
+
 
 
 // grabbin elements and assign to global/local scope
@@ -61,7 +61,7 @@ var hide_menus = GTRF.hide_menus = function() {
   //playlist_panel_div.style.display = 'none';
   playlist_list_span.style.display = 'none';
   playlist_save_panel_span.style.display = 'none';
-  
+
 }
 
 var show_import_menu = GTRF.show_import_menu = function() {
@@ -90,26 +90,26 @@ var show_playlist_menu = GTRF.show_playlist_menu = function() {
 
   playlist_list_span.style.display = 'inline-block';
   playlist_save_panel_span.style.display = 'inline-block';
-  
+
 }
 
 var toggle_playlist_menu = GTRF.toggle_playlist_menu = function() {
   if(playlist_list_span.style.display != 'none') {
     playlist_list_span.style.display = 'none'
     playlist_save_panel_span.style.display = 'none';
-    
+
   } else {
     playlist_list_span.style.display = 'inline-block';
     playlist_save_panel_span.style.display = 'inline-block';
-    
+
   }
-  
+
 }
 
 var set_playlist_menu_display = GTRF.set_playlist_menu_display = function(display) {
   playlist_list_span.style.display = display;
   playlist_save_panel_span.style.display = display;
-    
+
 }
 
 
@@ -123,7 +123,7 @@ var save_video_sync = GTRF.save_video_sync = function(video_info, prefix) {
 
 var get_video_sync = GTRF.get_video_sync = function(id, prefix, callback, params){
   chrome.storage.sync.get(prefix+id, function(obj){
-    
+
     if(obj[prefix+id]) {
       console.log('found video');
       callback(obj[prefix+id], params, id, prefix);
@@ -131,7 +131,7 @@ var get_video_sync = GTRF.get_video_sync = function(id, prefix, callback, params
       console.log("prefix + id not found");
       callback(false, params, id, prefix);
     }
-    
+
   });
 }
 
@@ -140,7 +140,6 @@ var get_playlist_menu_display = GTRF.get_playlist_menu_display = function() {
   return playlist_list_span.style.display;
 }
 
-hide_menus();
 
 
 // gee i wonder what this does
@@ -150,7 +149,7 @@ var add_to_queue = GTRF.add_to_queue = function() {
 
   if(validate_link(link) == false){
     return;
-  } 
+  }
 
   // part=fileDetails&id
 
@@ -160,10 +159,10 @@ var add_to_queue = GTRF.add_to_queue = function() {
 
   get_video_sync(vid.id, vid.prefix, function(video){
 
-    if(video){      
+    if(video){
       console.log('video found in sync storage');
       console.log(video);
-    
+
     } else {
       console.log('video not found in sync storage, retrieving');
       retrieve_yt_info(vid.id, function(video){
@@ -171,11 +170,11 @@ var add_to_queue = GTRF.add_to_queue = function() {
       });
     }
   });
-  
 
 
-  
- 
+
+
+
 
   // reads the text from the link input box and adds it to our links array
   links.push(link);
@@ -206,7 +205,7 @@ var retrieve_yt_info = GTRF.retrieve_yt_info = function(id, callback) {
             //console.log(xhr.responseText);
             var results = JSON.parse(xhr.responseText);
             console.log(results);
-            callback(results.items[0]);            
+            callback(results.items[0]);
           } else {
             console.error(xhr.statusText);
             console.error(xhr.responseText);
@@ -244,7 +243,7 @@ var update_addlist_titles = GTRF.update_addlist_titles = function() {
             } else {
               console.log('video not retrieved');
             }
-            
+
           });
         }
       }, {"element": addlist_children[i]});
@@ -284,31 +283,31 @@ var fire_queue = GTRF.fire_queue = function() {
 
     // get the fire rate, minimum 500ms, default 1000ms
     // if user dips below 500 we put them at default
-    
+
 
     if (rate_input.value < 250) {
       rate_input.value = 1000;
     } else if (!rate_input.value) {
       rate_input.value = 1000;
-    }         
+    }
 
     console.log("links length: " + links.length);
     links.forEach(function(link, i, array){
       setTimeout(function(){
-        var temp_link = link;        
+        var temp_link = link;
         if(validate_link(temp_link)){
           console.log("temp_link: "); console.log(temp_link);
-          send_link(temp_link);  
-        }   
-        
+          send_link(temp_link);
+        }
+
 
       }, i*rate_input.value);
       console.log("rate:"); console.log(i*rate_input.value);
       console.log("i: "); console.log(i);
 
     });
-  
-    
+
+
 
   }
   // turn clear queue on to destroy list every time
@@ -397,8 +396,8 @@ var set_status = GTRF.set_status = function(content) {
 var parse_vid_url = GTRF.parse_vid_url = function(url) {
   // only supports youtube atm
 
-  return { 
-    id: url.slice(-11), 
+  return {
+    id: url.slice(-11),
     prefix: "yt"
   };
 
@@ -412,7 +411,7 @@ var add_to_list = GTRF.add_to_list = function(content) {
 
   //console.log("in add to list");
 
-  
+
 
   var list_elem = document.createElement('span');
   var text_node = document.createTextNode(content);
@@ -434,7 +433,7 @@ var add_to_list = GTRF.add_to_list = function(content) {
 
 var export_playlists = GTRF.export_playlists = function() {
   get_playlists(function(playlists){
-    Genie.download_json('gtrf_playlists.json', JSON.stringify(playlists));
+    TP.download_json('gtrf_playlists.json', JSON.stringify(playlists));
   });
 }
 
@@ -464,7 +463,7 @@ var import_playlists = GTRF.import_playlists = function() {
 
 var export_list = GTRF.export_list = function(){
   update_links();
-  Genie.download_json('gtrf_list.json', JSON.stringify(links));
+  TP.download_json('gtrf_list.json', JSON.stringify(links));
 }
 
 var parse_import = GTRF.parse_import = function(){
@@ -493,21 +492,21 @@ var add_link_keyup = GTRF.add_link_keyup = function(event){
 var import_input_keyup = GTRF.import_input_keyup = function(event){
   var key_code = event.keyCode ? event.keyCode : event.which;
   if(key_code == 13){
-    parse_import(); 
+    parse_import();
   }
 }
 
 var get_playlist = GTRF.get_playlist = function(name, callback) {
-    
+
     get_playlists(function(playlists){
       console.log(playlists);
-      for (var playlist in playlists) {             
+      for (var playlist in playlists) {
         if (playlists[playlist].name == name) {
           callback(playlists[playlist]);
           break;
         }
       }
-    });      
+    });
 }
 
 var get_playlists = GTRF.getplaylists = function(callback){
@@ -556,7 +555,7 @@ var make_json_playlist = GTRF.make_json_playlist = function(callback) {
   chrome.storage.sync.get('link_queue', function(obj){
     if(obj.link_queue != null){
       var playlist = obj.link_queue;
-      console.log("making json playlist... ");      
+      console.log("making json playlist... ");
       callback(JSON.stringify(playlist));
     }
   });
@@ -566,7 +565,7 @@ var make_playlist = GTRF.make_playlist = function(callback) {
   chrome.storage.sync.get('link_queue', function(obj){
     if(obj.link_queue != null){
       var playlist = obj.link_queue;
-      console.log("making playlist... ");      
+      console.log("making playlist... ");
       callback(playlist);
     }
   });
@@ -575,16 +574,16 @@ var make_playlist = GTRF.make_playlist = function(callback) {
 
 var save_playlist = GTRF.save_playlist = function(){
   make_playlist(function(playlist){
-    get_playlist_count(function(playlist_count){        
+    get_playlist_count(function(playlist_count){
       var name = "";
 
       if(playlist_save_input.value) {
         name = playlist_save_input.value
         console.log("name set to " + playlist_save_input.value)
-      } else {        
+      } else {
           var num = playlist_count+1
           name = "gtrf_playlist_" + num;
-          console.log("no name provided, default " + name + " used");        
+          console.log("no name provided, default " + name + " used");
       }
 
       var new_playlist = {
@@ -596,7 +595,7 @@ var save_playlist = GTRF.save_playlist = function(){
 
       get_playlists(function(playlists){
         var temp_playlists = {};
-        if(playlists) { 
+        if(playlists) {
           console.log('playlists found, adding');
           console.log(playlists);
 
@@ -617,7 +616,7 @@ var save_playlist = GTRF.save_playlist = function(){
       });
 
     });
-  });  
+  });
 
 }
 
@@ -639,7 +638,7 @@ var open_playlist_panel = GTRF.open_playlist_panel = function(){
         list_elem.appendChild(entry);
         list_elem.setAttribute("class", "playlist_elem");
 
-        list_elem.onclick = function() {          
+        list_elem.onclick = function() {
           var temp_name = list_name;
           console.log("fetching list: " + temp_name);
           set_active_playlist(temp_name);
@@ -651,7 +650,7 @@ var open_playlist_panel = GTRF.open_playlist_panel = function(){
       });
 
     });
-  } 
+  }
 }
 
 var set_active_playlist = GTRF.set_active_playlist = function(name) {
@@ -680,7 +679,3 @@ import_submit_button.onclick = import_playlists;
 playlist_button.onclick = open_playlist_panel;
 save_playlist_button.onclick = save_playlist;
 clearall_button.onclick = clear_all;
-
-
-
-
