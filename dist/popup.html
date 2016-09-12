@@ -7,9 +7,14 @@
 </head>
   <div id="gg_menu">
     <div id="gg_header">
-    Goontube Genie
+      Goontube Genie
     </div>
-    <button id="gg_gtrf">GTRF</button>
+    <span class="tooltip">
+      <button id="gg_gtrf">GTRF</button>
+      <span class="tooltiptext">
+        Goontube Rapid Fire
+      </span>
+    </span>
   </div>
   <div id="gtrf">
     <div id="gtrf_header"> Goontube Rapid Fire</div>
@@ -17,14 +22,14 @@
 
     <div>
         <span class="tooltip">
-          <input type="text" id="gtrf_link_to_add" placeholder="link goes here" onkeyup="add_link_keyup(event)"/> 
+          <input type="text" id="gtrf_link_to_add" placeholder="link goes here" onkeyup="add_link_keyup(event)"/>
           <span class="tooltiptext">Right-click->paste a link to add to the queue</span>
         </span>
         <span class="tooltip"><button id="gtrf_add" >Add</button> <span class="tooltiptext" style="width: 90px">Click to add pasted link</span></span>
         <br>
         <br>
 
-    </div>  
+    </div>
 
     <div>
       <span class="tooltip">
@@ -35,7 +40,7 @@
         <input type="text" id="gtrf_rate" placeholder="Rate">
         <span class="tooltiptext">Rate at which to Fire, default 1000 minimum 500</span>
       </span>
-      <br>    
+      <br>
     </div>
 
     <div>
@@ -46,15 +51,15 @@
         </span>
       </span>
       <span class="tooltip">
-        <button id="gtrf_clearall">Wipe</button> 
+        <button id="gtrf_clearall">Wipe</button>
         <span class="warningtooltiptext">
           Removes ALL extension data from local and sync'd copies
         </span>
       </span>
     </div>
-    <div> 
-      <span class="tooltip">   
-        <button id="gtrf_import">Import</button> 
+    <div>
+      <span class="tooltip">
+        <button id="gtrf_import">Import</button>
         <span class="tooltiptext">
           Import playlists from an exported .json file
         </span>
@@ -82,7 +87,7 @@
         <button id="gtrf_import_submit">Submit</button>
     </div>
 
-    <div id="gtrf_playlist_panel">           
+    <div id="gtrf_playlist_panel">
       <span id="gtrf_playlist_save_panel">
         <input type="text" id="gtrf_save_playlist_input" placeholder="name of playlist" /> <button id="gtrf_save_playlist">Save</button>
       </span>
@@ -99,7 +104,7 @@
 
     <div id="gtrf_footer"></div>
   </div>
-  <script src="setup.js"></script>
+  <script src="static.js"></script>
   <script src="gtrf.js"></script>
   <script src="gg.js"></script>
 
