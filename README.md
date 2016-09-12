@@ -1,9 +1,16 @@
+
+
 # goontube-genie
-A Chrome Extension for saving video urls in playlists which can be automatically added to goontube
+A chrome extension for customizing interactions with the goontube client
 
 # installation
+Download the highest numbered goontube-genie-XX.crx file from the /bin folder above
+Navigate Chrome to chrome://extensions
+Drag and drop the file on Chrome
+Access through the Gg logo
 
-Navigate to the /bin folder above, and click the highest numbered goontube-rapidfire-XX.crx file. This will take you to a page with a download button to save the file to your computer (right click save as... will not get you the right file). After doing so, navigate chrome to chrome://extensions and drag the file onto the browser window.
+# goontube-rapidfire
+A goontube-genie module for saving video urls in playlists which can be automatically added to goontube
 
 # usage
 Note: keyboard copy+paste and pressing enter to submit aren't working yet, but the right-click menu works with paste and there are buttons for submitting everything. need to change how I'm interacting with the DOM and this should be available soon (api integration will make this irrelevant soon enough)

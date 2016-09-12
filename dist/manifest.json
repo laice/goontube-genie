@@ -23,7 +23,7 @@
 
   },
   "background": {
-    "scripts": ["settings.js"]
+    "scripts": ["setup.js"]
   }
 
 
