@@ -1,4 +1,4 @@
-var GTRF = Genie.GTRF
+var GTRF = Genie.GTRF;
 GTRF.links = [];
 var links = GTRF.links;
 
@@ -434,7 +434,7 @@ var add_to_list = GTRF.add_to_list = function(content) {
 
 var export_playlists = GTRF.export_playlists = function() {
   get_playlists(function(playlists){
-    download_json('gtrf_playlists.json', JSON.stringify(playlists));
+    Genie.download_json('gtrf_playlists.json', JSON.stringify(playlists));
   });
 }
 
@@ -464,7 +464,7 @@ var import_playlists = GTRF.import_playlists = function() {
 
 var export_list = GTRF.export_list = function(){
   update_links();
-  download_json('gtrf_list.json', JSON.stringify(links));
+  Genie.download_json('gtrf_list.json', JSON.stringify(links));
 }
 
 var parse_import = GTRF.parse_import = function(){
@@ -682,18 +682,5 @@ save_playlist_button.onclick = save_playlist;
 clearall_button.onclick = clear_all;
 
 
-// third party
 
-var download_json = function(filename, text) {
-  var element = document.createElement('a');
-  element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(text));
-  element.setAttribute('download', filename);
-
-  element.style.display = 'none';
-  document.body.appendChild(element);
-
-  element.click();
-
-  document.body.removeChild(element);
-}
 

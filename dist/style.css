@@ -136,6 +136,10 @@ input#gtrf_import_input {
     visibility: visible;
 }
 
+#gg_header {
+  width:200px;
+}
+
 #gtrf {
   border-style: solid;
   border-width: 1px;
