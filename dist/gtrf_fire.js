@@ -26,22 +26,22 @@ var runCounter = 0;
 
 // once injected code receives the link list it needs to start adding, we do dis
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse){
+  if(message.link){
+    var link = message.link;
+    console.log("link in content js: ");
+    console.log(link);
 
-  var link = message.link;
-  console.log("link in content js: ");
-  console.log(link);
 
+    // we found add button rite
+    if(add_button != null) {
 
-  // we found add button rite
-  if(add_button != null) {
-    
-    // this is a hack because for some reason the messages duplicate
-    // and im too dumb to figure out why
+      // this is a hack because for some reason the messages duplicate
+      // and im too dumb to figure out why
 
-    runCounter += 1;
-    if(runCounter == 1){
-      // here is where we start adding things to the playlist
-        
+      runCounter += 1;
+      if(runCounter == 1){
+        // here is where we start adding things to the playlist
+
         // we grab dat text field
         // new tubes text field
         //var add_input = document.getElementsByClassName("")[0].getElementsByTagName('input')[0];
@@ -71,13 +71,13 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse){
         //(document.head||document.documentElement).appendChild(injection_tag);
         document.body.appendChild(injection_tag);
         //console.log("local_link:");
-        //console.log(local_link);      
+        //console.log(local_link);
 
         console.log(runCounter);
       }
 
     }
 
-
+  }
 
 });

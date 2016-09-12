@@ -1,4 +1,5 @@
-var GTRF = chrome.extension.getBackgroundPage().Genie.GTRF;
+var Genie = chrome.extension.getBackgroundPage().Genie;
+var GTRF = Genie.GTRF
 GTRF.links = [];
 var links = GTRF.links;
 
@@ -11,7 +12,17 @@ var update_links = GTRF.update_links = function(){
       console.log(links);
       if(links.length > 0) {
         links.forEach(function(link, i, array){
-          add_to_list(link);
+          var vid = parse_vid_url(link);
+          console.log("update links vid: ");
+          console.log(vid);
+          if(vid.prefix == "dm"){
+            console.log('adding dm to list');
+            dm_short_to_long(link, function(url){
+              add_to_list(url);
+            });
+          } else {
+            add_to_list(link);
+          }
         });
       }
 
@@ -122,11 +133,11 @@ var save_video_sync = GTRF.save_video_sync = function(video_info, prefix) {
 }
 
 var get_video_sync = GTRF.get_video_sync = function(id, prefix, callback, params){
-  chrome.storage.sync.get(prefix+id, function(obj){
+  chrome.storage.sync.get(""+prefix+id, function(obj){
 
-    if(obj[prefix+id]) {
+    if(obj[""+prefix+id]) {
       console.log('found video');
-      callback(obj[prefix+id], params, id, prefix);
+      callback(obj[""+prefix+id], params, id, prefix);
     } else {
       console.log("prefix + id not found");
       callback(false, params, id, prefix);
@@ -154,6 +165,9 @@ var add_to_queue = GTRF.add_to_queue = function() {
   // part=fileDetails&id
 
   var vid = parse_vid_url(link);
+
+
+  console.log("adding to queue.. ");
   console.log(vid.id);
   var video_title = "";
 
@@ -165,9 +179,23 @@ var add_to_queue = GTRF.add_to_queue = function() {
 
     } else {
       console.log('video not found in sync storage, retrieving');
-      retrieve_yt_info(vid.id, function(video){
-        save_video_sync(video, vid.prefix);
-      });
+      switch(vid.prefix){
+          case "yt":
+            retrieve_yt_info(vid.id, function(video){
+              save_video_sync(video, vid.prefix);
+            });
+            break;
+          case "dm":
+            retrieve_dm_info(vid.id, function(video){
+              save_video_sync(video, vid.prefix);
+            });
+            break;
+          case "vm":
+            break;
+          default:
+            break;
+      }
+
     }
   });
 
@@ -177,7 +205,16 @@ var add_to_queue = GTRF.add_to_queue = function() {
 
 
   // reads the text from the link input box and adds it to our links array
-  links.push(link);
+
+  if(vid.prefix =="dm"){
+    dm_short_to_long(link, function(url){
+      console.log("pushing...");
+      console.log(url);
+      links.push(url);
+    });
+  } else {
+    links.push(link);
+  }
 
   // overwrites stored links array with new links array
   chrome.storage.sync.set({link_queue: links}, function(){
@@ -197,14 +234,14 @@ var add_to_queue = GTRF.add_to_queue = function() {
 var retrieve_yt_info = GTRF.retrieve_yt_info = function(id, callback) {
   var xhr = new XMLHttpRequest();
 
-      xhr.open("GET", "https://www.googleapis.com/youtube/v3/videos?id="+id+"&part=snippet&key="+GTRF.settings.key, true);
+      xhr.open("GET", "https://www.googleapis.com/youtube/v3/videos?id="+id+"&part=snippet&key="+GTRF.settings.youtube_key, true);
 
       xhr.onload = function(e) {
         if(xhr.readyState === 4 ) {
           if (xhr.status === 200){
             //console.log(xhr.responseText);
             var results = JSON.parse(xhr.responseText);
-            console.log(results);
+            //console.log(results);
             callback(results.items[0]);
           } else {
             console.error(xhr.statusText);
@@ -217,40 +254,198 @@ var retrieve_yt_info = GTRF.retrieve_yt_info = function(id, callback) {
       xhr.send();
 }
 
+var retrieve_dm_info = GTRF.retrieve_dm_info = function(id, callback){
+  var xhr = new XMLHttpRequest();
+  console.log('retrieving dm info');
+  xhr.open("GET", "https://api.dailymotion.com/video/" + id +"?fields=id,title,url");
 
+  xhr.onload = function(e){
+    if(xhr.readyState === 4) {
+      if(xhr.status === 200) {
+        console.log(' dm results found');
+        var result = JSON.parse(xhr.responseText);
+        console.log(result);
+        callback(result);
+      } else {
+        console.error(xhr.statusText);
+        console.error(xhr.responseText);
+        callback(false);
+      }
+    }
+  }
+  xhr.send();
+}
 
 var update_addlist_titles = GTRF.update_addlist_titles = function() {
-  console.log('updating titles');
+  //console.log('updating titles');
   var addlist_children = add_list_div.children;
   for(var i = 0; i < addlist_children.length; i++){
-    if(addlist_children[i].innerHTML.substring(0,4) == "http"){
+    var vid = parse_vid_url(addlist_children[i].innerHTML);
+    console.log(addlist_children[i].innerHTML);
+    console.log(vid);
+    get_video_sync(vid.id, vid.prefix, function(video, params, id, prefix){
+      var element = params.element;
+      switch(prefix){
+        case "yt": {
+          if (video){
+            //console.log("found addlist video: ");
+            //console.log(video.snippet.title);
+            element.innerHTML = video.snippet.title;
+          } else {
+            //console.log('video not found, retrieving info for ' + id);
+            retrieve_yt_info(id, function(video){
+              if(video){
+                //console.log('video found:');
+                //console.log(video);
+                save_video_sync(video, "yt");
+                element.innerHTML = video.snippet.title;
+              } else {
+                //console.log('video not retrieved');
+              }
+            });
+          }
+          break;
+        }
+
+        case "dm": {
+            if(video){
+              console.log("dm video found in storage");
+              console.log(video);
+            }
+            console.log('dm vid');
+            retrieve_dm_info(id, function(video){
+              console.log(video);
+              element.innerHTML = video.title;
+            });
+          break;
+        }
+
+        case "dml": {
+          if(video){
+            console.log("dml video found in storage");
+            console.log(video);
+          }
+          console.log('dml vid');
+          console.log(id.substring(0,7));
+          retrieve_dm_info(id.substring(0,7), function(video){
+            console.log(video);
+            element.innerHTML = video.title;
+          });
+        }
+
+        case "vm" : {
+
+          break;
+        }
+
+        default:
+          break;
+      }
+
+    }, {"element": addlist_children[i]});
+
+/*
+    if(addlist_children[i].innerHTML.substring(0,13) == "https://youtu."){
       var id = addlist_children[i].innerHTML.slice(-11);
-      console.log(i + ": " + id);
+      //console.log(i + ": " + id);
       get_video_sync(id, "yt", function(video, params, id, prefix){
         var element = params.element;
         if (video){
-          console.log("found addlist video: ");
-          console.log(video.snippet.title);
+          //console.log("found addlist video: ");
+          //console.log(video.snippet.title);
           element.innerHTML = video.snippet.title;
         } else {
-          console.log('video not found, retrieving info for ' + id);
+          //console.log('video not found, retrieving info for ' + id);
           retrieve_yt_info(id, function(video){
             if(video){
-              console.log('video found:');
-              console.log(video);
+              //console.log('video found:');
+              //console.log(video);
               save_video_sync(video, "yt");
               element.innerHTML = video.snippet.title;
             } else {
-              console.log('video not retrieved');
+              //console.log('video not retrieved');
             }
 
           });
         }
       }, {"element": addlist_children[i]});
     }
+
+    if(addlist_children[i].innerHTML.substring(0,13) == "https://dai.ly") {
+      get_video_sync(id, "dm", function(video, params, id, prefix){
+        var element = params.element;
+        if (video) {
+          console.log("dailymotion vid found: ");
+          console.log(video);
+        } else {
+          var vid = parse_vid_url(addlist_children[i].innerHTML);
+        }
+      }, {"element":addlist_children[i]});
+    }
+
+    if(addlist_children[i].innerHTML.substring(0,13) == "https://vimeo.") {
+
+    }
+*/
+    // end for loop
   }
+
+
+
+
 }
 
+var parse_vid_url = GTRF.parse_vid_url = function(url) {
+  var url_obj = {};
+  console.log(url.substring(0,13));
+  switch(url.substring(0, 13)){
+    case "https://youtu":
+      url_obj = {
+        id: url.slice(-11),
+        prefix: "yt"
+      };
+      break;
+    case "http://dai.ly":
+      url_obj = {
+        id: url.slice(-7),
+        prefix: "dm"
+      };
+      break;
+    case "http://www.da":
+      url_obj = {
+        id: url.replace("http://www.dailymotion.com/video/", ""),
+        prefix: "dml"
+      }
+      break;
+    case "https://vimeo":
+      url_obj = {
+        id: url.slice(-9),
+        prefix: "vm"
+      }
+      break;
+    default:
+      url_obj = false;
+      break;
+  }
+
+  return url_obj;
+}
+
+var dm_short_to_long = GTRF.dm_short_to_long = function(url, callback) {
+  var nurl = parse_vid_url(url);
+
+  retrieve_dm_info(nurl.id, function(video){
+    console.log("short to long callback");
+    console.log(video);
+    if(video){
+      console.log(video.url);
+      callback(video.url);
+    } else {
+      callback(false);
+    }
+  });
+
+}
 
 
 // weak ass validation for now
@@ -321,22 +516,18 @@ var send_link = GTRF.send_link = function(link){
   console.log(link);
   // chrome needs to know what tab we're using, we only use
   // the active tab so it's always gonna be the id of tab[0] in this query
-  var id;
-  chrome.tabs.query(
-    {currentWindow: true, active: true},
-    function(tabArray) { id = tabArray[0].id; }
 
-  );
-
-  // send in the injected code
-  chrome.tabs.executeScript({file:"/gtrf_fire.js"}, function(){
-    // tell injected code what our links are
-    chrome.tabs.sendMessage(id, {link: link}, function(){
-      console.log("link sent");
+  Genie.get_current_tab(function(current_tab){
+    //var current_tab = tabArray[0];
+    console.log(current_tab);
+    // send in the injected code
+    chrome.tabs.executeScript({file:"/gtrf_fire.js"}, function(){
+      // tell injected code what our links are
+      chrome.tabs.sendMessage(current_tab.id, {link: link}, function(){
+        console.log("link sent");
+      });
     });
-
   });
-
 }
 
 
@@ -393,16 +584,7 @@ var set_status = GTRF.set_status = function(content) {
   status_div.appendChild(text_node);
 }
 
-var parse_vid_url = GTRF.parse_vid_url = function(url) {
-  // only supports youtube atm
 
-  return {
-    id: url.slice(-11),
-    prefix: "yt"
-  };
-
-
-}
 
 
 // this list collects all the vids the user adds and puts them down
@@ -410,25 +592,47 @@ var parse_vid_url = GTRF.parse_vid_url = function(url) {
 var add_to_list = GTRF.add_to_list = function(content) {
 
   //console.log("in add to list");
-
-
-
+  var vid = parse_vid_url(content);
   var list_elem = document.createElement('span');
-  var text_node = document.createTextNode(content);
   var br = document.createElement("br");
+  // ugh code duplication im sorry
+  if(vid){
+    console.log('vid found');
+    if(vid.id == "dm") {
+      console.log('dm found');
+      dm_short_to_long(content, function(url){
 
-  list_elem.setAttribute("class", "add_list_elem");
+        var text_node = document.createTextNode(url);
+        list_elem.setAttribute("class", "add_list_elem");
 
-  list_elem.onclick=function(){
-    var local_link = content;
-    //var link_list = [local_link];
-    send_link(local_link, 500);
+        list_elem.onclick=function(){
+          var local_link = content;
+          //var link_list = [local_link];
+          send_link(local_link, 500);
+        }
+
+        list_elem.appendChild(text_node);
+        add_list_div.appendChild(list_elem);
+        add_list_div.appendChild(br);
+        update_addlist_titles();
+      });
+    } else {
+      var text_node = document.createTextNode(content);
+      list_elem.setAttribute("class", "add_list_elem");
+
+      list_elem.onclick=function(){
+        var local_link = content;
+        //var link_list = [local_link];
+        send_link(local_link, 500);
+      }
+
+      list_elem.appendChild(text_node);
+      add_list_div.appendChild(list_elem);
+      add_list_div.appendChild(br);
+      update_addlist_titles();
+    }
   }
 
-  list_elem.appendChild(text_node);
-  add_list_div.appendChild(list_elem);
-  add_list_div.appendChild(br);
-  update_addlist_titles();
 }
 
 var export_playlists = GTRF.export_playlists = function() {

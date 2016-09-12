@@ -165,6 +165,10 @@ input#gtrf_import_input {
   color: red;
   border-color: red;
 }
+
+#gtrf_status_message {
+  /*width: 100px;*/
+}
 /*
 #gtrf_import_input_div {
   display: none;

@@ -20,3 +20,7 @@ if(Genie.GTRF.hidden){
 
 GTRF.update_links();
 GTRF.hide_menus();
+
+Genie.is_goontube(function(igt){
+  console.log("is goontube? " + igt);
+});

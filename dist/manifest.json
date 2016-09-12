@@ -15,7 +15,8 @@
   "permissions": [
     "activeTab",
     "storage",
-    "https://www.googleapis.com/"
+    "https://www.googleapis.com/",
+    "http://api.vimeo.com/"
   ],
   "icons": { "16": "images/icon-16.png",
             "48": "images/icon-48.png",
