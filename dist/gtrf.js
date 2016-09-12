@@ -5,23 +5,35 @@ var links = GTRF.links;
 
 // check to see if we already have a link queue saved, if so assign it to links array
 
+GTRF.validate_links = function() {
+  chrome.storage.sync.get('link_queue', function(obj){
+    if(obj.link_queue) {
+
+    }
+  });
+}
+
 GTRF.update_links = function(){
   chrome.storage.sync.get('link_queue', function(obj){
-    if(obj.link_queue != null){
+    if(obj.link_queue){
       links = obj.link_queue;
       console.log(links);
       if(links.length > 0) {
         links.forEach(function(link, i, array){
-          var vid = GTRF.parse_vid_url(link);
-          console.log("update links vid: ");
-          console.log(vid);
-          if(vid.prefix == "dm"){
-            console.log('adding dm to list');
-            GTRF.dm_short_to_long(link, function(url){
-              GTRF.add_to_list(url);
-            });
+          if(links[i]){
+            var vid = GTRF.parse_vid_url(link);
+            console.log("update links vid: ");
+            console.log(vid);
+            if(vid.prefix == "dm"){
+              console.log('adding dm to list');
+              GTRF.dm_short_to_long(link, function(url){
+                GTRF.add_to_list(url);
+              });
+            } else {
+              GTRF.add_to_list(link);
+            }
           } else {
-            GTRF.add_to_list(link);
+            links.splice(i, 1);
           }
         });
       }
@@ -38,92 +50,6 @@ GTRF.update_links = function(){
 
 
 
-
-// grabbin elements and assign to global/local scope
-var link_input = GTRF.link_input = document.getElementById('gtrf_link_to_add');
-var rate_input = GTRF.rate_input = document.getElementById('gtrf_rate');
-var import_input =  GTRF.import_input = document.getElementById("gtrf_import_input")
-var playlist_save_input = GTRF.playlist_save_input = document.getElementById('gtrf_save_playlist_input');
-
-var add_button = GTRF.add_button = document.getElementById('gtrf_add');
-var fire_button = GTRF.fire_button = document.getElementById('gtrf_fire');
-var clear_button = GTRF.clear_button = document.getElementById('gtrf_clear');
-var clearall_button = GTRF.clearall_button = document.getElementById('gtrf_clearall');
-var export_button = GTRF.export_button = document.getElementById('gtrf_export');
-var import_button = GTRF.import_button = document.getElementById('gtrf_import');
-var import_submit_button = GTRF.import_submit_button = document.getElementById('gtrf_import_submit');
-var playlist_button = GTRF.playlist_button = document.getElementById('gtrf_playlist');
-var save_playlist_button = GTRF.save_playlist_button = document.getElementById('gtrf_save_playlist');
-
-
-var status_div = GTRF.status_div = document.getElementById('gtrf_status_message');
-var add_list_div = GTRF.add_list_div = document.getElementById('gtrf_add_list');
-var import_input_div = GTRF.import_input_div = document.getElementById("gtrf_import_input_div");
-var playlist_panel_div = GTRF.playlist_panel_div = document.getElementById("gtrf_playlist_panel");
-
-var playlist_list_span = GTRF.playlist_list_span = document.getElementById("gtrf_playlist_list");
-var playlist_save_panel_span = GTRF.playlist_save_panel = document.getElementById("gtrf_playlist_save_panel");
-
-
-// UI setup and init
-
-GTRF.hide_menus = function() {
-  import_input_div.style.display = 'none';
-  //playlist_panel_div.style.display = 'none';
-  playlist_list_span.style.display = 'none';
-  playlist_save_panel_span.style.display = 'none';
-
-}
-
-GTRF.show_import_menu = function() {
-  import_input_div.style.display = 'inline-block';
-}
-
-GTRF.toggle_import_menu = function(){
-  if(import_input_div.style.display != 'none') {
-    import_input_div.style.display = 'none';
-  } else {
-    //import_input_div.style.display = 'block';
-    GTRF.show_import_menu();
-  }
-
-}
-
-GTRF.set_import_menu_display = function(display) {
-  import_input_div.style.display = display;
-}
-
-GTRF.get_import_menu_display = function() {
-  return import_input_div.style.display;
-}
-
-GTRF.show_playlist_menu = function() {
-
-  playlist_list_span.style.display = 'inline-block';
-  playlist_save_panel_span.style.display = 'inline-block';
-
-}
-
-GTRF.toggle_playlist_menu = function() {
-  if(playlist_list_span.style.display != 'none') {
-    playlist_list_span.style.display = 'none'
-    playlist_save_panel_span.style.display = 'none';
-
-  } else {
-    playlist_list_span.style.display = 'inline-block';
-    playlist_save_panel_span.style.display = 'inline-block';
-
-  }
-
-}
-
-GTRF.set_playlist_menu_display = function(display) {
-  playlist_list_span.style.display = display;
-  playlist_save_panel_span.style.display = display;
-
-}
-
-
 GTRF.save_video_sync = function(video_info, prefix) {
   var vid_obj = {};
   vid_obj[prefix+video_info.id] = video_info;
@@ -132,34 +58,33 @@ GTRF.save_video_sync = function(video_info, prefix) {
   });
 }
 
-GTRF.get_video_sync = function(id, prefix, callback, params){
+GTRF.get_video_sync = function(vid, callback, params){
+  var prefix = vid.prefix;
+  var id = vid.id;
+
   chrome.storage.sync.get(""+prefix+id, function(obj){
 
     if(obj[""+prefix+id]) {
-      console.log('found video');
-      callback(obj[""+prefix+id], params, id, prefix);
+      console.log('found video in GTRF.get_video_sync');
+      callback(obj[""+prefix+id], params, vid);
     } else {
-      console.log("prefix + id not found");
-      callback(false, params, id, prefix);
+      console.log("prefix + id not found in GTRF.get_video_sync");
+      callback(false, params, vid);
     }
 
   });
 }
 
 
-GTRF.get_playlist_menu_display = function() {
-  return playlist_list_span.style.display;
-}
-
-
-
-// gee i wonder what this does
+// adds video to current playlist
 GTRF.add_to_queue = function() {
   // reads the text from the link input box and adds it to our links array
-  var link  = link_input.value;
+  var link  = GTRF.link_input.value;
   // validation
-
+  console.log('in add to queue, link: ');
+  console.log(link);
   if(GTRF.validate_link(link) == false){
+    console.error('link failed validation in add_to_queue');
     return;
   }
 
@@ -172,11 +97,12 @@ GTRF.add_to_queue = function() {
   console.log(vid.id);
   var video_title = "";
 
-  GTRF.get_video_sync(vid.id, vid.prefix, function(video){
+  GTRF.get_video_sync(vid, function(video, params, vid){
 
     if(video){
       console.log('video found in sync storage');
       console.log(video);
+      GTRF.push_link_queue(video.url);
 
     } else {
       console.log('video not found in sync storage, retrieving');
@@ -184,13 +110,30 @@ GTRF.add_to_queue = function() {
           case "yt":
             GTRF.retrieve_yt_info(vid.id, function(video){
               GTRF.save_video_sync(video, vid.prefix);
+              console.log('yt link:');
+              console.log(link);
+              GTRF.push_link_queue(link);
             });
             break;
-          case "dm":
+          case "dm": {
+            console.log("dm vid found in add_to_queue");
+
             GTRF.retrieve_dm_info(vid.id, function(video){
               GTRF.save_video_sync(video, vid.prefix);
+              GTRF.dm_short_to_long(link, function(url){
+                console.log("pushing...");
+                console.log(vid.url);
+                GTRF.push_link_queue(vid.url);
+
+              });
             });
             break;
+          }
+          case "dml": {
+            console.log('dml attempting to add: ');
+            console.log(video);
+            //GTRF.push_link_queue(video.url);
+          }
           case "vm":
             break;
           default:
@@ -198,21 +141,17 @@ GTRF.add_to_queue = function() {
       }
 
     }
+    GTRF.link_input.value = "";
+
   });
 
+}
 
-
-  if(vid.prefix =="dm"){
-    GTRF.dm_short_to_long(link, function(url){
-      console.log("pushing...");
-      console.log(url);
-      links.push(url);
-    });
-  } else {
-    links.push(link);
-  }
-
+GTRF.push_link_queue = function(link) {
+  links.push(link);
   // overwrites stored links array with new links array
+  console.log('pushed to links: ');
+  console.log(links);
   chrome.storage.sync.set({link_queue: links}, function(){
     console.log("link queue set");
   });
@@ -223,8 +162,6 @@ GTRF.add_to_queue = function() {
   // add the link to the list so the user knows wtf they got goin, and
   // reset the input field
   GTRF.add_to_list(link);
-  link_input.value = "";
-
 }
 
 GTRF.retrieve_yt_info = function(id, callback) {
@@ -275,71 +212,80 @@ GTRF.retrieve_dm_info = function(id, callback){
 GTRF.update_addlist_titles = function() {
   //console.log('updating titles');
   var addlist_children = add_list_div.children;
+  console.log('update addlist children:');
+  console.log(addlist_children);
+  //var addlist_spans = addlist_children.getElementsByClassName("add_list_elem");
   for(var i = 0; i < addlist_children.length; i++){
-    var vid = GTRF.parse_vid_url(addlist_children[i].innerHTML);
-    console.log(addlist_children[i].innerHTML);
-    console.log(vid);
-    GTRF.get_video_sync(vid.id, vid.prefix, function(video, params, id, prefix){
-      var element = params.element;
-      switch(prefix){
-        case "yt": {
-          if (video){
-            //console.log("found addlist video: ");
-            //console.log(video.snippet.title);
-            element.innerHTML = video.snippet.title;
-          } else {
-            //console.log('video not found, retrieving info for ' + id);
-            GTRF.retrieve_yt_info(id, function(video){
-              if(video){
-                //console.log('video found:');
-                //console.log(video);
-                GTRF.save_video_sync(video, "yt");
-                element.innerHTML = video.snippet.title;
-              } else {
-                //console.log('video not retrieved');
-              }
-            });
+    if(addlist_children[i].nodeName == "SPAN") {
+      var vid = GTRF.parse_vid_url(addlist_children[i].innerHTML);
+      console.log(addlist_children[i].innerHTML);
+      console.log(vid);
+      GTRF.get_video_sync(vid, function(video, params, vid){
+        var id = vid.id;
+        var prefix = vid.prefix;
+        var element = params.element;
+        switch(prefix){
+          case "yt": {
+            if (video){
+              //console.log("found addlist video: ");
+              //console.log(video.snippet.title);
+              element.innerHTML = video.snippet.title;
+            } else {
+              //console.log('video not found, retrieving info for ' + id);
+              GTRF.retrieve_yt_info(id, function(video){
+                if(video){
+                  //console.log('video found:');
+                  //console.log(video);
+                  GTRF.save_video_sync(video, "yt");
+                  element.innerHTML = video.snippet.title;
+                  element.setAttribute('data-url', vid.url)
+                } else {
+                  //console.log('video not retrieved');
+                }
+              });
+            }
+            break;
           }
-          break;
-        }
 
-        case "dm": {
+          case "dm": {
+              if(video){
+                console.log("dm video found in storage");
+                console.log(video);
+              }
+              console.log('dm vid');
+              GTRF.retrieve_dm_info(id, function(video){
+                console.log(video);
+                element.innerHTML = video.title;
+                element.setAttribute('data-url', vid.url);
+
+              });
+            break;
+          }
+
+          case "dml": {
             if(video){
-              console.log("dm video found in storage");
+              console.log("dml video found in storage");
               console.log(video);
             }
-            console.log('dm vid');
-            GTRF.retrieve_dm_info(id, function(video){
+            console.log('dml vid');
+            console.log(id.substring(0,7));
+            GTRF.retrieve_dm_info(id.substring(0,7), function(video){
               console.log(video);
               element.innerHTML = video.title;
             });
-          break;
-        }
-
-        case "dml": {
-          if(video){
-            console.log("dml video found in storage");
-            console.log(video);
           }
-          console.log('dml vid');
-          console.log(id.substring(0,7));
-          GTRF.retrieve_dm_info(id.substring(0,7), function(video){
-            console.log(video);
-            element.innerHTML = video.title;
-          });
+
+          case "vm" : {
+
+            break;
+          }
+
+          default:
+            break;
         }
 
-        case "vm" : {
-
-          break;
-        }
-
-        default:
-          break;
-      }
-
-    }, {"element": addlist_children[i]});
-
+      }, {"element": addlist_children[i]});
+    }
     // end for loop
   }
 
@@ -350,6 +296,7 @@ GTRF.update_addlist_titles = function() {
 
 GTRF.parse_vid_url = function(url) {
   var url_obj = {};
+
   console.log(url.substring(0,13));
   switch(url.substring(0, 13)){
     case "https://youtu":
@@ -380,6 +327,8 @@ GTRF.parse_vid_url = function(url) {
       url_obj = false;
       break;
   }
+
+  url_obj.url = url;
 
   return url_obj;
 }
@@ -506,6 +455,7 @@ GTRF.clear_queue = function() {
 
 GTRF.clear_playlist_list = function() {
   playlist_list_span.innerHTML = "";
+
 }
 
 GTRF.clear_all = function() {
@@ -550,16 +500,18 @@ GTRF.add_to_list = function(content) {
   var br = document.createElement("br");
   // ugh code duplication im sorry
   if(vid){
-    console.log('vid found');
-    if(vid.id == "dm") {
+    console.log('vid found in GTRF.add_to_list');
+    console.log(vid);
+    if(vid.prefix == "dm") {
       console.log('dm found');
       GTRF.dm_short_to_long(content, function(url){
-
+        console.log('dm short to long in add_to_list:');
+        console.log(url);
         var text_node = document.createTextNode(url);
         list_elem.setAttribute("class", "add_list_elem");
 
         list_elem.onclick=function(){
-          var local_link = content;
+          var local_link = url;
           //var link_list = [local_link];
           GTRF.send_link(local_link, 500);
         }
@@ -584,6 +536,8 @@ GTRF.add_to_list = function(content) {
       add_list_div.appendChild(br);
       GTRF.update_addlist_titles();
     }
+  } else {
+    console.error('video failed to parse');
   }
 
 }
@@ -667,7 +621,7 @@ GTRF.get_playlists = function(callback){
   });
 }
 
-var get_playlist_count = GTRF.get_playlist_count = function(callback){
+GTRF.get_playlist_count = function(callback){
   GTRF.get_playlists(function(playlists){
     var count = 0;
     for (var playlist in playlists) {
@@ -763,38 +717,7 @@ GTRF.save_playlist = function(){
 
 }
 
-GTRF.open_playlist_panel = function(){
-  console.log('opening playlist');
-  GTRF.toggle_playlist_menu()
-  GTRF.clear_playlist_list();
-  if(GTRF.get_playlist_menu_display() != 'none'){
-    console.log('playlist visible');
-    GTRF.get_playlist_names(function(playlists){
 
-      console.log(JSON.stringify(playlists));
-
-      playlists.forEach(function(list_name, i, array){
-        var list_elem = document.createElement('span');
-        var entry = document.createTextNode(list_name);
-        var br = document.createElement('br');
-
-        list_elem.appendChild(entry);
-        list_elem.setAttribute("class", "playlist_elem");
-
-        list_elem.onclick = function() {
-          var temp_name = list_name;
-          console.log("fetching list: " + temp_name);
-          GTRF.set_active_playlist(temp_name);
-          GTRF.open_playlist_panel();
-        }
-
-        playlist_list_span.appendChild(list_elem);
-        playlist_list_span.appendChild(br);
-      });
-
-    });
-  }
-}
 
 GTRF.set_active_playlist = function(name) {
   GTRF.clear_queue();
@@ -807,18 +730,3 @@ GTRF.set_active_playlist = function(name) {
     });
   });
 }
-
-
-// button click handlers
-
-add_button.onclick = GTRF.add_to_queue;
-fire_button.onclick = GTRF.fire_queue;
-clear_button.onclick = GTRF.clear_queue;
-//export_button.onclick = GTRF.export_list;
-export_button.onclick = GTRF.export_playlists;
-import_button.onclick = GTRF.toggle_import_menu;
-//import_submit_button.onclick = GTRF.parse_import;
-import_submit_button.onclick = GTRF.import_playlists;
-playlist_button.onclick = GTRF.open_playlist_panel;
-save_playlist_button.onclick = GTRF.save_playlist;
-clearall_button.onclick = GTRF.clear_all;

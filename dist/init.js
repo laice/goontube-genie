@@ -1,4 +1,5 @@
 var Genie = chrome.extension.getBackgroundPage().Genie;
+var GTRF = Genie.GTRF;
 
 // run first time extension is opened
 if(!Genie.run_once) {
@@ -17,7 +18,8 @@ if(Genie.GTRF.hidden){
 } else {
   Genie.show_gtrf();
 }
-
+console.log("GTRF in init: ");
+console.log(GTRF);
 GTRF.update_links();
 GTRF.hide_menus();
 
