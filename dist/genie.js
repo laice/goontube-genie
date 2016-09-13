@@ -41,7 +41,7 @@ Genie.is_goontube = function(callback) {
 
 Genie.IMG.retrieve_info = function(id, callback) {
   var xhr = new XMLHttpRequest();
-
+  console.log('retrieving... ' + id);
   xhr.open("GET", "https://api.imgur.com/3/image/" + id);
   xhr.setRequestHeader("Authorization", "Client-ID " + Genie.settings.imgur_id);
   xhr.onload = function(e) {
@@ -61,7 +61,7 @@ Genie.IMG.retrieve_info = function(id, callback) {
 }
 
 Genie.IMG.add = function(url, callback) {
-  var id = url.splice(-7);
+  var id = url.slice(-5);
   chrome.storage.sync.get("imgur", function(obj){
     if(obj){
       console.log('found imgur');

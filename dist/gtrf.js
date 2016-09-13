@@ -13,7 +13,7 @@ GTRF.validate_links = function() {
   });
 }
 
-GTRF.update_links = function(){
+GTRF.update_links = function(callback){
   chrome.storage.sync.get('link_queue', function(obj){
     if(obj.link_queue){
       links = obj.link_queue;
@@ -28,19 +28,22 @@ GTRF.update_links = function(){
               console.log('adding dm to list');
               Genie.dm.short_to_long(link, function(url){
                 GTRF.add_to_list(url);
+
               });
             } else {
               GTRF.add_to_list(link);
+
             }
           } else {
             links.splice(i, 1);
           }
         });
+
       }
 
       console.log("links length: " + links.length);
 
-      GTRF.update_addlist_titles();
+      GTRF.update_addlist_titles(callback);
 
     }
   });
@@ -223,7 +226,7 @@ GTRF.retrieve_dm_info = function(id, callback){
   xhr.send();
 }
 */
-GTRF.update_addlist_titles = function() {
+GTRF.update_addlist_titles = function(callback) {
   //console.log('updating titles');
   var addlist_children = add_list_div.children;
   console.log('update addlist children:');
@@ -322,7 +325,7 @@ GTRF.update_addlist_titles = function() {
     // end for loop
   }
 
-
+  if(callback){callback();}
 
 
 }

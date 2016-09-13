@@ -3,6 +3,7 @@
   <title>Goontube Genie</title>
   <link rel="stylesheet" type="text/css" href="style.css">
 </head>
+
   <div id="gg_menu">
     <div id="gg_header">
       Goontube Genie
@@ -13,13 +14,35 @@
         Manage video playlists
       </span>
     </span>
+    <!--
     <span class="tooltip">
       <button id="gg_imgur">Imgur</button>
       <span class="tooltiptext">
         Store picture links
       </span>
     </span>
+  -->
   </div>
+  <!-- canceled until i think about it more
+  <div id="imgur">
+    <div id="imgur_menu">
+      <span class="tooltip">
+        <input type="text" id="imgur_text_input" placeholder="imgur link here"/>
+        <span class="tooltiptext">Paste imgur link</span>
+      </span>
+      <span class="tooltip">
+        <button id="imgur_add">Add</button>
+        <span class="tooltiptext">Add imgur link</span>
+      </span>
+
+      <div id="imgur_list">
+
+      </div>
+
+    </div>
+  </div>
+  -->
+
   <div id="gtrf">
     <div id="gtrf_header"> Goontube Rapid Fire</div>
     <div id="gtrf_status_message"> </div>
@@ -107,19 +130,10 @@
 
     <div id="gtrf_footer"></div>
   </div>
-  <div id="imgur">
-    <div id="imgur_menu">
-      <span class="tooltip">
-        <input type="text" id="imgur_text_input" placeholder="imgur link here"/>
-        <span class="tooltiptext">Paste imgur link</span>
-      </span>
-      <span class="tooltip">
-        <button id="imgur_add">Add</button>
-        <span class="tooltiptext">Add imgur link</span>
-      </span>
 
-    </div>
-  </div>
+
+
+
   <script src="third_party.js"></script>
   <script src="static.js"></script>
   <script src="gtrf.js"></script>

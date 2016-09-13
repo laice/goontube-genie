@@ -26,6 +26,38 @@ var playlist_panel_div = GTRF.playlist_panel_div = document.getElementById("gtrf
 var playlist_list_span = GTRF.playlist_list_span = document.getElementById("gtrf_playlist_list");
 var playlist_save_panel_span = GTRF.playlist_save_panel = document.getElementById("gtrf_playlist_save_panel");
 
+GTRF.hide = function() {
+  Genie.GTRF.main_div.style.display = 'none';
+  Genie.GTRF.hidden = true;
+}
+
+GTRF.show = function() {
+  Genie.GTRF.main_div.style.display = 'inline-block';
+  Genie.GTRF.hidden = false;
+}
+
+GTRF.toggle_display = function() {
+
+  if (Genie.GTRF.main_div.style.display == 'none'){
+    GTRF.init(GTRF.show);
+  } else {
+    GTRF.hide();
+  }
+}
+
+GTRF.match_display = function() {
+  if(GTRF.hidden || GTRF.main_div.style.display == "none" || GTRF.main_div.style.display == null || GTRF.main_div.style.display == ""){
+    GTRF.hide();
+  } else {
+    GTRF.show();
+  }
+}
+
+GTRF.init = function(callback) {
+  GTRF.update_links(callback);  
+}
+
+
 // UI setup and init
 
 GTRF.hide_menus = function() {

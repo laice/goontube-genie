@@ -6,31 +6,23 @@ Genie.imgur_button = document.getElementById("gg_imgur");
 console.log(Genie);
 // Genie UI
 Genie.hide_menus = function() {
-  Genie.hide_gtrf();
+  Genie.GTRF.hide();
   Genie.IMG.hide();
 }
 
+Genie.show_buttons = function() {
+  Genie.gtrf_button.style = "inline-block";
+  //Genie.imgur_button.style = "inline-block";
+}
+
+Genie.hide_buttons = function() {
+  Genie.gtrf_button.style = "none";
+  //Genie.imgur_button.style = "none";
+}
+
 // Genie GTRF UI
-Genie.hide_gtrf = function() {
-  Genie.GTRF.main_div.style.display = 'none';
-  Genie.GTRF.hidden = true;
-}
-
-Genie.show_gtrf = function() {
-  Genie.GTRF.main_div.style.display = 'inline-block';
-  Genie.GTRF.hidden = false;
-}
-
-Genie.toggle_gtrf = function() {
-
-  if (Genie.GTRF.main_div.style.display == 'none'){
-    Genie.show_gtrf();
-  } else {
-    Genie.hide_gtrf();
-  }
-}
 
 
 // event handlers
-Genie.gtrf_button.onclick = Genie.toggle_gtrf;
-Genie.imgur_button.onclick = Genie.IMG.toggle_display;
+Genie.gtrf_button.onclick = Genie.GTRF.toggle_display;
+//Genie.imgur_button.onclick = Genie.IMG.toggle_display;

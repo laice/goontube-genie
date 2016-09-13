@@ -195,6 +195,10 @@ input#gtrf_import_input {
   left: 0;
 }
 */
+
+#imgur_menu {
+  width:250px;
+}
 .add_list_elem:hover {
   background: darkgreen;
   cursor: pointer;
