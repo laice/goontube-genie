@@ -15,8 +15,11 @@
   "permissions": [
     "activeTab",
     "storage",
+    "identity",
     "https://www.googleapis.com/",
-    "http://api.vimeo.com/"
+    "http://api.vimeo.com/",
+    "https://imgur.com/"
+
   ],
   "icons": { "16": "images/icon-16.png",
             "48": "images/icon-48.png",

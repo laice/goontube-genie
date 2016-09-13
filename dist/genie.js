@@ -39,6 +39,55 @@ Genie.is_goontube = function(callback) {
   });
 }
 
+
+
+Genie.IMG.authorize = function(callback) {
+
+  chrome.identity.launchWebAuthFlow({url:"https://api.imgur.com/oauth2/authorize?client_id="+Genie.settings.imgur_id+"&response_type=token", interactive: true },
+    function(responseURL){
+      console.log(responseURL);
+    });
+
+  /*
+  chrome.windows.create({type: 'panel', url:"https://api.imgur.com/oauth2/authorize?client_id="+Genie.settings.imgur_id+"&response_type=token"}, function(window){
+
+  });
+
+  /*
+  var xhr = new XMLHttpRequest();
+
+  xhr.open("GET", "https://api.imgur.com/oauth2/authorize?client_id="+Genie.settings.imgur_id+"&response_type=token");
+  //xhr.setRequestHeader("Authorization", "Client-ID " + Genie.settings.imgur_id);
+  xhr.onload = function(e) {
+    if(xhr.readyState===4){
+      if(xhr.status===200){
+        console.log("imgur retrived: ");
+        console.log(xhr.response);
+        chrome.windows.create({type: 'panel', url:"imgur_response.html"}, function(window){
+          //chrome.tabs.create({windowId:window.id, url:"imgur_response.html"}, function(tab){
+            chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
+              sendResponse({code: xhr.response});
+
+            });
+          //});
+        });
+
+        //callback(JSON.parse(xhr.responseText), id);
+      } else {
+        console.error(xhr.statusText);
+        console.log(xhr.responseText);
+        callback(false, id);
+      }
+    }
+  }
+  xhr.send();
+  */
+}
+
+Genie.IMG.authorized_callback = function() {
+  console.log("authorized");
+}
+
 Genie.IMG.retrieve_info = function(id, callback) {
   var xhr = new XMLHttpRequest();
   console.log('retrieving... ' + id);
@@ -53,7 +102,7 @@ Genie.IMG.retrieve_info = function(id, callback) {
       } else {
         console.error(xhr.statusText);
         console.log(xhr.responseText);
-        callback(false);
+        callback(false, id);
       }
     }
   }
@@ -97,7 +146,7 @@ Genie.IMG.add = function(url, callback) {
 }
 
 Genie.vm = {};
-Genie.vm.authenticate = function(callback) {
+Genie.vm.authorize = function(callback) {
   console.log("authenticating vimeo...");
   var xhr = new XMLHttpRequest();
   xhr.open("POST", "https://api.vimeo.com/oauth/authorize/client?grant_type=client_credentials");

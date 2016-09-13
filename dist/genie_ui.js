@@ -12,12 +12,12 @@ Genie.hide_menus = function() {
 
 Genie.show_buttons = function() {
   Genie.gtrf_button.style = "inline-block";
-  //Genie.imgur_button.style = "inline-block";
+  Genie.imgur_button.style = "inline-block";
 }
 
 Genie.hide_buttons = function() {
   Genie.gtrf_button.style = "none";
-  //Genie.imgur_button.style = "none";
+  Genie.imgur_button.style = "none";
 }
 
 // Genie GTRF UI
@@ -25,4 +25,4 @@ Genie.hide_buttons = function() {
 
 // event handlers
 Genie.gtrf_button.onclick = Genie.GTRF.toggle_display;
-//Genie.imgur_button.onclick = Genie.IMG.toggle_display;
+Genie.imgur_button.onclick = Genie.IMG.toggle_display;

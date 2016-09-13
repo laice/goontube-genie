@@ -5,11 +5,14 @@ var imgur_text_input = IMG.text_input = document.getElementById("imgur_text_inpu
 var imgur_add_button = IMG.add_button = document.getElementById("imgur_add");
 var imgur_div = IMG.main_div = document.getElementById("imgur");
 var imgur_list_div = IMG.list_div = document.getElementById("imgur_list");
+var imgur_authorize = IMG.auth_div = document.getElementById("imgur_authorize");
+var imgur_auth_button = IMG.auth_button = document.getElementById("imgur_authorize_button")
 
 // places to re-enable
 // init.js IMG.match_display
 // this page very bottom imgur_add_button.onclick
 // genie_ui various: show_buttons, hide_buttons, onclick
+// genie.html whole div
 
 
 IMG.init = function(callback) {
@@ -72,4 +75,9 @@ IMG.match_display = function() {
   }
 }
 
-//imgur_add_button.onclick = IMG.collect_url;
+IMG.authorize_click = function(){
+  IMG.authorize(IMG.authorized_callback);
+}
+
+imgur_auth_button.onclick = IMG.authorize_click;
+imgur_add_button.onclick = IMG.collect_url;
