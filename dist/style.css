@@ -123,7 +123,7 @@ input#gtrf_import_input {
     /* Position the tooltip text - see examples below! */
     position: absolute;
     z-index: 1;
-    
+
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
@@ -132,12 +132,12 @@ input#gtrf_import_input {
     color: #red;
     bottom: 40px;
     left: 10px;
-    
+
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
 .tooltip:hover .tooltiptext {
-    visibility: visible;    
+    visibility: visible;
     bottom: 40px;
     left: 10px;
 }
@@ -186,6 +186,13 @@ input#gtrf_import_input {
 
 #gtrf_playlist_save_panel {
   display: none;
+}
+*/
+/*
+#imgur {
+  position:absolute;
+  top: 0;
+  left: 0;
 }
 */
 .add_list_elem:hover {

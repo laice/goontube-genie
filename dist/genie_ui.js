@@ -2,10 +2,12 @@ var Genie = chrome.extension.getBackgroundPage().Genie;
 
 Genie.GTRF.main_div = document.getElementById("gtrf");
 Genie.gtrf_button = document.getElementById("gg_gtrf");
+Genie.imgur_button = document.getElementById("gg_imgur");
 console.log(Genie);
 // Genie UI
 Genie.hide_menus = function() {
   Genie.hide_gtrf();
+  Genie.IMG.hide();
 }
 
 // Genie GTRF UI
@@ -28,5 +30,7 @@ Genie.toggle_gtrf = function() {
   }
 }
 
+
 // event handlers
 Genie.gtrf_button.onclick = Genie.toggle_gtrf;
+Genie.imgur_button.onclick = Genie.IMG.toggle_display;

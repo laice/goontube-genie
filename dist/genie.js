@@ -38,6 +38,64 @@ Genie.is_goontube = function(callback) {
     }
   });
 }
+
+Genie.IMG.retrieve_info = function(id, callback) {
+  var xhr = new XMLHttpRequest();
+
+  xhr.open("GET", "https://api.imgur.com/3/image/" + id);
+  xhr.setRequestHeader("Authorization", "Client-ID " + Genie.settings.imgur_id);
+  xhr.onload = function(e) {
+    if(xhr.readyState===4){
+      if(xhr.status===200){
+        console.log("imgur retrived: ");
+        console.log(xhr.responseText);
+        callback(JSON.parse(xhr.responseText), id);
+      } else {
+        console.error(xhr.statusText);
+        console.log(xhr.responseText);
+        callback(false);
+      }
+    }
+  }
+  xhr.send();
+}
+
+Genie.IMG.add = function(url, callback) {
+  var id = url.splice(-7);
+  chrome.storage.sync.get("imgur", function(obj){
+    if(obj){
+      console.log('found imgur');
+      console.log(obj);
+      if(obj[id]){
+        console.log('image already in storage');
+      } else {
+        console.log('image not in storage');
+        IMG.retrieve_info(id, function(img, id){
+            if(img){
+              obj[id] = img;
+              chrome.storage.sync.set({"imgur": obj}, function(){
+                console.log('image saved to pre-existing imgur');
+              });
+            }
+        });
+      }
+    } else {
+      console.log('imgur not found, creating');
+      IMG.retrieve_info(id, function(img, id){
+          if(img){
+            var imgur = [];
+            imgur[id] = img;
+            chrome.storage.sync.set({"imgur": imgur}, function(){
+              console.log('image saved to new imgur');
+            });
+          } else {
+            console.log('invalid image id: ' + id);
+          }
+      });
+    }
+  });
+}
+
 Genie.vm = {};
 Genie.vm.authenticate = function(callback) {
   console.log("authenticating vimeo...");
@@ -45,7 +103,7 @@ Genie.vm.authenticate = function(callback) {
   xhr.open("POST", "https://api.vimeo.com/oauth/authorize/client?grant_type=client_credentials");
   //console.log(Genie.GTRF.settings.vimeo_id);
   //console.log(Genie.GTRF.settings.vimeo_secret);
-  var secret = TP.Base64.encode(Genie.GTRF.settings.vimeo_id + ":" + Genie.GTRF.settings.vimeo_secret);
+  var secret = TP.Base64.encode(Genie.settings.vimeo_id + ":" + Genie.settings.vimeo_secret);
   xhr.setRequestHeader("Authorization", "Basic " + secret );
   xhr.setRequestHeader("Accept", "application/vnd.vimeo.*+json;version=3.2");
   xhr.setRequestHeader("Content-Type", "application/json");
@@ -79,7 +137,7 @@ Genie.vm.retrieve_info = function(id, callback){
     if(xhr.readyState===4){
       if(xhr.status===200){
         console.log("vimeo info:");
-        console.log(xhr.responseText);
+        //console.log(xhr.responseText);
         callback(JSON.parse(xhr.responseText));
       } else {
         console.error(xhr.statusText);
@@ -96,7 +154,7 @@ Genie.yt = {};
 Genie.yt.retrieve_info = function(id, callback) {
   var xhr = new XMLHttpRequest();
 
-      xhr.open("GET", "https://www.googleapis.com/youtube/v3/videos?id="+id+"&part=snippet&key="+GTRF.settings.youtube_key, true);
+      xhr.open("GET", "https://www.googleapis.com/youtube/v3/videos?id="+id+"&part=snippet&key="+Genie.settings.youtube_key, true);
 
       xhr.onload = function(e) {
         if(xhr.readyState === 4 ) {
