@@ -11,7 +11,12 @@ if(!Genie.run_once) {
   Genie.run_once = true;
 }
 
+
 // run each time extension is opened
+
+Genie.vm.authenticate(function(response){
+  GTRF.update_links();
+});
 
 if(Genie.GTRF.hidden){
   Genie.hide_gtrf();
@@ -20,7 +25,6 @@ if(Genie.GTRF.hidden){
 }
 console.log("GTRF in init: ");
 console.log(GTRF);
-GTRF.update_links();
 GTRF.hide_menus();
 
 Genie.is_goontube(function(igt){

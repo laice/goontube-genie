@@ -21,12 +21,12 @@ GTRF.update_links = function(){
       if(links.length > 0) {
         links.forEach(function(link, i, array){
           if(links[i]){
-            var vid = GTRF.parse_vid_url(link);
+            var vid = Genie.parse_vid_url(link);
             console.log("update links vid: ");
             console.log(vid);
             if(vid.prefix == "dm"){
               console.log('adding dm to list');
-              GTRF.dm_short_to_long(link, function(url){
+              Genie.dm.short_to_long(link, function(url){
                 GTRF.add_to_list(url);
               });
             } else {
@@ -90,7 +90,7 @@ GTRF.add_to_queue = function() {
 
   // part=fileDetails&id
 
-  var vid = GTRF.parse_vid_url(link);
+  var vid = Genie.parse_vid_url(link);
 
 
   console.log("adding to queue.. ");
@@ -108,7 +108,7 @@ GTRF.add_to_queue = function() {
       console.log('video not found in sync storage, retrieving');
       switch(vid.prefix){
           case "yt":
-            GTRF.retrieve_yt_info(vid.id, function(video){
+            Genie.yt.retrieve_info(vid.id, function(video){
               GTRF.save_video_sync(video, vid.prefix);
               console.log('yt link:');
               console.log(link);
@@ -118,9 +118,9 @@ GTRF.add_to_queue = function() {
           case "dm": {
             console.log("dm vid found in add_to_queue");
 
-            GTRF.retrieve_dm_info(vid.id, function(video){
+            Genie.dm.retrieve_info(vid.id, function(video){
               GTRF.save_video_sync(video, vid.prefix);
-              GTRF.dm_short_to_long(link, function(url){
+              Genie.dm.short_to_long(link, function(url){
                 console.log("pushing...");
                 console.log(vid.url);
                 GTRF.push_link_queue(vid.url);
@@ -132,10 +132,23 @@ GTRF.add_to_queue = function() {
           case "dml": {
             console.log('dml attempting to add: ');
             console.log(video);
-            //GTRF.push_link_queue(video.url);
-          }
-          case "vm":
+            GTRF.push_link_queue(vid.url);
             break;
+          }
+
+          case "vm": {
+            console.log('vm attempting to add..');
+            console.log(video);
+            console.log(vid);
+            Genie.vm.retrieve_info(vid.id, function(video){
+              console.log("retrieved vm video: ");
+              console.log(video);
+              GTRF.save_video_sync(video, vid.prefix);
+              GTRF.push_link_queue(video.link)
+            });
+
+            break;
+          }
           default:
             break;
       }
@@ -164,6 +177,7 @@ GTRF.push_link_queue = function(link) {
   GTRF.add_to_list(link);
 }
 
+/*
 GTRF.retrieve_yt_info = function(id, callback) {
   var xhr = new XMLHttpRequest();
 
@@ -208,7 +222,7 @@ GTRF.retrieve_dm_info = function(id, callback){
   }
   xhr.send();
 }
-
+*/
 GTRF.update_addlist_titles = function() {
   //console.log('updating titles');
   var addlist_children = add_list_div.children;
@@ -217,7 +231,7 @@ GTRF.update_addlist_titles = function() {
   //var addlist_spans = addlist_children.getElementsByClassName("add_list_elem");
   for(var i = 0; i < addlist_children.length; i++){
     if(addlist_children[i].nodeName == "SPAN") {
-      var vid = GTRF.parse_vid_url(addlist_children[i].innerHTML);
+      var vid = Genie.parse_vid_url(addlist_children[i].innerHTML);
       console.log(addlist_children[i].innerHTML);
       console.log(vid);
       GTRF.get_video_sync(vid, function(video, params, vid){
@@ -227,12 +241,13 @@ GTRF.update_addlist_titles = function() {
         switch(prefix){
           case "yt": {
             if (video){
+              console.log('yt video found in storage')
               //console.log("found addlist video: ");
               //console.log(video.snippet.title);
               element.innerHTML = video.snippet.title;
             } else {
-              //console.log('video not found, retrieving info for ' + id);
-              GTRF.retrieve_yt_info(id, function(video){
+              console.log('yt video not found in storage, retrieving');
+              Genie.yt.retrieve_info(id, function(video){
                 if(video){
                   //console.log('video found:');
                   //console.log(video);
@@ -251,9 +266,11 @@ GTRF.update_addlist_titles = function() {
               if(video){
                 console.log("dm video found in storage");
                 console.log(video);
+                element.innerHTML = video.title;
               }
-              console.log('dm vid');
-              GTRF.retrieve_dm_info(id, function(video){
+              console.log('dm video not found in storage, retrieving');
+              Genie.dm.retrieve_info(id, function(video){
+                console.log('retrieved dm: ');
                 console.log(video);
                 element.innerHTML = video.title;
                 element.setAttribute('data-url', vid.url);
@@ -266,16 +283,32 @@ GTRF.update_addlist_titles = function() {
             if(video){
               console.log("dml video found in storage");
               console.log(video);
-            }
-            console.log('dml vid');
-            console.log(id.substring(0,7));
-            GTRF.retrieve_dm_info(id.substring(0,7), function(video){
-              console.log(video);
               element.innerHTML = video.title;
-            });
+            } else {
+              console.log('dml not found in storage, retrieving ');
+              console.log(id.substring(0,7));
+              Genie.dm.retrieve_info(id.substring(0,7), function(video){
+                console.log('retrieved dml: ');
+                console.log(video);
+                element.innerHTML = video.title;
+              });
+            }
+            break;
           }
 
           case "vm" : {
+            if(video){
+              console.log('vm video found in storage');
+              console.log(video);
+              element.innerHTML = video.name;
+            } else {
+              console.log('vm video not found in storage, retrieving');
+              Genie.vm.retrieve_info(id, function(video){
+                console.log('retrieved vm: ');
+                console.log(video);
+                element.innerHTML = video.name;
+              });
+            }
 
             break;
           }
@@ -291,61 +324,6 @@ GTRF.update_addlist_titles = function() {
 
 
 
-
-}
-
-GTRF.parse_vid_url = function(url) {
-  var url_obj = {};
-
-  console.log(url.substring(0,13));
-  switch(url.substring(0, 13)){
-    case "https://youtu":
-      url_obj = {
-        id: url.slice(-11),
-        prefix: "yt"
-      };
-      break;
-    case "http://dai.ly":
-      url_obj = {
-        id: url.slice(-7),
-        prefix: "dm"
-      };
-      break;
-    case "http://www.da":
-      url_obj = {
-        id: url.replace("http://www.dailymotion.com/video/", ""),
-        prefix: "dml"
-      }
-      break;
-    case "https://vimeo":
-      url_obj = {
-        id: url.slice(-9),
-        prefix: "vm"
-      }
-      break;
-    default:
-      url_obj = false;
-      break;
-  }
-
-  url_obj.url = url;
-
-  return url_obj;
-}
-
-GTRF.dm_short_to_long = function(url, callback) {
-  var nurl = GTRF.parse_vid_url(url);
-
-  GTRF.retrieve_dm_info(nurl.id, function(video){
-    console.log("short to long callback");
-    console.log(video);
-    if(video){
-      console.log(video.url);
-      callback(video.url);
-    } else {
-      callback(false);
-    }
-  });
 
 }
 
@@ -495,7 +473,7 @@ GTRF.set_status = function(content) {
 GTRF.add_to_list = function(content) {
 
   //console.log("in add to list");
-  var vid = GTRF.parse_vid_url(content);
+  var vid = Genie.parse_vid_url(content);
   var list_elem = document.createElement('span');
   var br = document.createElement("br");
   // ugh code duplication im sorry
@@ -504,7 +482,7 @@ GTRF.add_to_list = function(content) {
     console.log(vid);
     if(vid.prefix == "dm") {
       console.log('dm found');
-      GTRF.dm_short_to_long(content, function(url){
+      Genie.dm.short_to_long(content, function(url){
         console.log('dm short to long in add_to_list:');
         console.log(url);
         var text_node = document.createTextNode(url);
