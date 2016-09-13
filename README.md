@@ -1,7 +1,7 @@
 
 
 # goontube-genie
-A chrome extension for customizing interactions with the goontube client
+A chrome extension for customizing interactions with the goontube client. Now supports youtube, dailymotion and vimeo apis!
 
 # installation
 * Download the highest numbered goontube-genie-XX.crx file from the /bin folder above
@@ -9,10 +9,11 @@ A chrome extension for customizing interactions with the goontube client
 * Drag and drop the file on Chrome
 * Access through the Gg logo
 
-# goontube-rapidfire
+## goontube-rapidfire
+
 A goontube-genie module for saving video urls in playlists which can be automatically added to goontube
 
-# usage
+## usage
 Note: keyboard copy+paste and pressing enter to submit aren't working yet, but the right-click menu works with paste and there are buttons for submitting everything. need to change how I'm interacting with the DOM and this should be available soon (api integration will make this irrelevant soon enough)
 
 Note: Currently only supports oldtubes, but jskz is gonna hook that shit up yo
@@ -35,7 +36,7 @@ Playlists can now be saved! Using the Lists button, you can name your current pl
 * Optional automatic playlist removal of played links
 * Permanently saved playlists in sync storage
 * Management of individual playlist entries
-* Gathering title data from api's so you dont have to remember vids by their shortcodes *Done for youtube
+* ~~Gathering title data from api's so you dont have to remember vids by their shortcodes~~ Done.
 * Automatic gathering relevant links from video sites, removing need for copy/paste
 * imgur integration for easily saving and adding gifs and images to chat, with optional support for automatic viewing them inline in chat (like extended emotes)
 * Other stuff I'm not remembering now
