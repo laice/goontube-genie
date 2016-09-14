@@ -37,8 +37,9 @@ GTRF.show = function() {
 }
 
 GTRF.toggle_display = function() {
-
+  
   if (Genie.GTRF.main_div.style.display == 'none'){
+    
     GTRF.init(GTRF.show);
   } else {
     GTRF.hide();
@@ -54,6 +55,7 @@ GTRF.match_display = function() {
 }
 
 GTRF.init = function(callback) {
+  console.log('init gtrf');
   GTRF.update_links(callback);  
 }
 
@@ -98,6 +100,7 @@ GTRF.show_playlist_menu = function() {
 }
 
 GTRF.toggle_playlist_menu = function() {
+  console.log('clicked')
   if(playlist_list_span.style.display != 'none') {
     playlist_list_span.style.display = 'none'
     playlist_save_panel_span.style.display = 'none';

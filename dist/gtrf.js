@@ -14,8 +14,11 @@ GTRF.validate_links = function() {
 }
 
 GTRF.update_links = function(callback){
+  console.log('update links');
   chrome.storage.sync.get('link_queue', function(obj){
+    console.log(obj);
     if(obj.link_queue){
+
       links = obj.link_queue;
       console.log(links);
       if(links.length > 0) {
@@ -45,6 +48,9 @@ GTRF.update_links = function(callback){
 
       GTRF.update_addlist_titles(callback);
 
+    } else {
+      console.log('no link queue');
+      callback();
     }
   });
 
@@ -227,7 +233,7 @@ GTRF.retrieve_dm_info = function(id, callback){
 }
 */
 GTRF.update_addlist_titles = function(callback) {
-  //console.log('updating titles');
+  console.log('updating titles');
   var addlist_children = add_list_div.children;
   console.log('update addlist children:');
   console.log(addlist_children);
